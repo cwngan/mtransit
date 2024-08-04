@@ -11,8 +11,8 @@ import { useRouter } from "next/navigation";
 import useAxios from "@/app/instances/use-axios";
 import Header from "./components/Header";
 import StationList from "./components/StationList";
-import { RouteData } from "./types/route-info";
-import { BusData } from "./types/bus";
+import { RouteData, StationInfo } from "./types/route-info";
+import { BusData, BusInfo } from "./types/bus";
 import { RouteDataWithBus } from "@/app/types/bus-route";
 import RouteInfoContext from "./store/RouteInfoContext";
 
@@ -72,7 +72,6 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
       for (let i = 0; i < data.data.routeInfo.length; i++) {
         data.data.routeInfo[i].busInfo = [];
       }
-      setCurrentRouteData(data);
       setRouteInfo((prev) => {
         return { ...prev, routeCode: data.data?.routeCode };
       });
@@ -88,16 +87,18 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
   }, [getBusData]);
 
   useEffect(() => {
-    if (!busData) return;
-    setCurrentRouteData((prev) => {
-      let tmp = prev;
-      if (!tmp?.data) return null;
-      for (let i = 0; i < busData.data.routeInfo.length; i++) {
-        tmp.data.routeInfo[i].busInfo = busData.data.routeInfo[i].busInfo;
-      }
-      return tmp;
+    if (!busData || !routeData?.data) return;
+    setCurrentRouteData({
+      data: {
+        ...routeData.data,
+        routeInfo: routeData.data.routeInfo.map((s, i) => {
+          const tmp = s as StationInfo & { busInfo: BusInfo[] };
+          tmp.busInfo = busData.data.routeInfo[i].busInfo;
+          return tmp;
+        }),
+      },
     });
-  }, [busData, currentRouteData?.data]);
+  }, [busData, routeData]);
 
   if (routeData?.data?.error) return <div>{routeData.data.error}</div>;
 
