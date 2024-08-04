@@ -43,11 +43,13 @@ export async function POST(request: Request) {
     lat: string;
     lon: string;
     distance: number;
+    traffic: string;
   })[] = [];
-  for (let i = staIndex - 1; i >= 0; i--) {
+  for (let i = staIndex; i >= 0; i--) {
     if (buses.length >= 3) break;
     let bi = busData.data.routeInfo[i].busInfo;
     for (let bus of bi) {
+      if (i === staIndex && bus.status === "0") continue;
       const location = locationData.data.busInfoList.find(
         (b) => b.busPlate === bus.busPlate,
       );
@@ -59,6 +61,7 @@ export async function POST(request: Request) {
         lat: location?.latitude || "0",
         lon: location?.longitude || "0",
         distance: 0,
+        traffic: geoTrafficData.data[i].newRouteTraffic,
       });
     }
   }
@@ -66,6 +69,7 @@ export async function POST(request: Request) {
   for (let i = 0; i < buses.length; i++) {
     const busStaIndex = buses[i].staIndex;
     let distance = 0;
+    if (busStaIndex === staIndex) continue;
     let { lat, lon } = buses[i];
     let tmp = geoTrafficData.data[busStaIndex].routeCoordinates
       .split(";")

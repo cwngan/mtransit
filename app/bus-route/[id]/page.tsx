@@ -1,5 +1,12 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import {
+  ReducerAction,
+  ReducerState,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import { useRouter } from "next/navigation";
 import useAxios from "@/app/instances/use-axios";
 import Header from "./components/Header";
@@ -7,7 +14,7 @@ import StationList from "./components/StationList";
 import { RouteData } from "./types/route-info";
 import { BusData } from "./types/bus";
 import { RouteDataWithBus } from "@/app/types/bus-route";
-import BusColorContext from "./store/RouteInfoContext";
+import RouteInfoContext from "./store/RouteInfoContext";
 
 export default function Page({ params: { id } }: { params: { id: string } }) {
   const router = useRouter();
@@ -35,35 +42,28 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
     url: "bus",
     data: { routeName: id, dir: 0 },
   });
-  const [
-    { loading: capacityLoading, data: capacity, error: capacityError },
-    getCapacity,
-  ] = useAxios({
-    url: "capacity",
-    data: { routeName: id, dir: 0 },
-  });
-  const [
-    { loading: trafficLoading, data: traffic, error: trafficError },
-    getTraffic,
-  ] = useAxios({
-    url: "traffic",
-  });
+  // const [
+  //   { loading: capacityLoading, data: capacity, error: capacityError },
+  //   getCapacity,
+  // ] = useAxios({
+  //   url: "capacity",
+  //   data: { routeName: id, dir: 0 },
+  // });
 
   useEffect(() => {
     if (!routeInfo.routeCode) return;
     const n = window.setInterval(() => {
       getBusData();
-      getCapacity();
-      getTraffic({ data: { routeCode: routeInfo.routeCode, dir: 0 } });
+      // getCapacity();
     }, 5000);
     return () => {
       window.clearInterval(n);
     };
   }, [routeInfo]);
 
-  useEffect(() => {
-    getCapacity();
-  }, [getCapacity]);
+  // useEffect(() => {
+  //   getCapacity();
+  // }, [getCapacity]);
 
   useEffect(() => {
     getRouteData().then((res) => {
@@ -88,15 +88,6 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
   }, [getBusData]);
 
   useEffect(() => {
-    console.log("route info changed");
-  }, [routeInfo]);
-
-  useEffect(() => {
-    if (!routeData?.data) return;
-    getTraffic({ data: { routeCode: routeData.data.routeCode, dir: 0 } });
-  }, [routeData, getTraffic]);
-
-  useEffect(() => {
     if (!busData) return;
     setCurrentRouteData((prev) => {
       let tmp = prev;
@@ -111,7 +102,7 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
   if (routeData?.data?.error) return <div>{routeData.data.error}</div>;
 
   return (
-    <BusColorContext.Provider value={routeInfo}>
+    <RouteInfoContext.Provider value={routeInfo}>
       <Header
         routeName={id}
         from={routeData?.data?.routeInfo[0].staName}
@@ -122,6 +113,6 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
       <div style={{ paddingTop: `${headerRef.current?.clientHeight || 0}px` }}>
         <StationList {...currentRouteData} />
       </div>
-    </BusColorContext.Provider>
+    </RouteInfoContext.Provider>
   );
 }
