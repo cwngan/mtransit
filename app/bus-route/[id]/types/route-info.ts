@@ -6,6 +6,7 @@ export interface RouteData {
 export interface Data {
   error?: string;
   routeCode: string;
+  routeType: string;
   direction: string;
   routeInfo: StationInfo[];
   msgList: any[];

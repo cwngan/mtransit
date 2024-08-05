@@ -49,14 +49,16 @@ const Header = forwardRef<HTMLDivElement, HeaderProps>(function Header(
             </div>
           </div>
         </div>
-        <div>
-          <ArrowsRightLeftIcon
-            className="stroke-white"
-            onClick={() => {
-              router.push(`?dir=${dir === "0" ? "1" : "0"}`);
-            }}
-          />
-        </div>
+        {routeInfo?.routeType === "0" ? (
+          <div>
+            <ArrowsRightLeftIcon
+              className="stroke-white"
+              onClick={() => {
+                router.push(`?dir=${dir === "0" ? "1" : "0"}`);
+              }}
+            />
+          </div>
+        ) : null}
       </div>
       <OperationTime routeName={routeName} dir={dir} />
     </div>

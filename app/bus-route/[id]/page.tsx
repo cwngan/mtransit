@@ -17,6 +17,7 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
   const [routeInfo, setRouteInfo] = useState<{
     routeCode?: string;
     routeName: string;
+    routeType?: string;
     dir: string;
     busColor?: string;
   }>({ routeName: id, dir });
@@ -81,11 +82,12 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
     getRouteData().then((res) => {
       let data = res.data as RouteDataWithBus;
       if (!data.data) return;
-      for (let i = 0; i < data.data.routeInfo.length; i++) {
-        data.data.routeInfo[i].busInfo = [];
-      }
       setRouteInfo((prev) => {
-        return { ...prev, routeCode: data.data?.routeCode };
+        return {
+          ...prev,
+          routeCode: data.data?.routeCode,
+          routeType: data.data?.routeType,
+        };
       });
     });
   }, [getRouteData]);
