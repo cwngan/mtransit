@@ -10,6 +10,7 @@ type StationBlockProps = StationInfo & { busInfo: BusInfo[] } & {
   isOpen: boolean;
   open: () => void;
   close: () => void;
+  traffic: string;
 };
 
 export default function StationBlock({
@@ -22,10 +23,16 @@ export default function StationBlock({
   staName,
   first,
   last,
+  traffic,
 }: StationBlockProps) {
   return (
     <div className={`grid grid-cols-12 ${isOpen ? "bg-gray-100" : "bg-white"}`}>
-      <StationLine busInfo={busInfo} first={first} last={last} />
+      <StationLine
+        busInfo={busInfo}
+        first={first}
+        last={last}
+        traffic={traffic}
+      />
       <div
         className="col-span-11"
         onClick={() => {

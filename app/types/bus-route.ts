@@ -7,9 +7,11 @@ import {
 
 export interface BusRouteBase {
   routeName: string;
-  dir: 0 | 1 | 2;
+  dir: string;
 }
 
 export interface RouteDataWithBus extends RouteData {
-  data?: Data & { routeInfo: (StationInfo & { busInfo: BusInfo[] })[] };
+  data?: Data & {
+    routeInfo: (StationInfo & { busInfo: BusInfo[]; traffic: string })[];
+  };
 }

@@ -1,19 +1,21 @@
-import { HomeIcon } from "@heroicons/react/24/outline";
+import { ArrowsRightLeftIcon, HomeIcon } from "@heroicons/react/24/outline";
 import OperationTime from "./OperationTime";
-import { forwardRef, RefObject, useContext } from "react";
+import { forwardRef, useContext } from "react";
 import RouteInfoContext from "../store/RouteInfoContext";
+import { useRouter } from "next/navigation";
 
 interface HeaderProps {
   routeName: string;
   from: string | undefined;
   to: string | undefined;
-  dir: 0 | 1 | 2;
+  dir: string;
 }
 
 const Header = forwardRef<HTMLDivElement, HeaderProps>(function Header(
   { routeName, from, to, dir },
   ref,
 ) {
+  const router = useRouter();
   const routeInfo = useContext(RouteInfoContext);
   return (
     <div className="fixed z-50 w-full" ref={ref}>
@@ -46,6 +48,14 @@ const Header = forwardRef<HTMLDivElement, HeaderProps>(function Header(
               </div>
             </div>
           </div>
+        </div>
+        <div>
+          <ArrowsRightLeftIcon
+            className="stroke-white"
+            onClick={() => {
+              router.push(`?dir=${dir === "0" ? "1" : "0"}`);
+            }}
+          />
         </div>
       </div>
       <OperationTime routeName={routeName} dir={dir} />

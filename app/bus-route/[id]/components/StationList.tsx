@@ -10,7 +10,10 @@ export default function StationList({ data }: RouteDataWithBus) {
     <div>
       {data && data.routeInfo.length > 0
         ? data.routeInfo.map(
-            (station: StationInfo & { busInfo: BusInfo[] }, index) => {
+            (
+              station: StationInfo & { busInfo: BusInfo[]; traffic: string },
+              index,
+            ) => {
               return (
                 <StationBlock
                   {...station}
@@ -25,6 +28,7 @@ export default function StationList({ data }: RouteDataWithBus) {
                   close={() => {
                     setOpenIndex(null);
                   }}
+                  traffic={station.traffic}
                 />
               );
             },
