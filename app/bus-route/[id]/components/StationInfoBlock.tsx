@@ -1,9 +1,9 @@
-import { useContext, useRef, useEffect } from "react";
+import { useContext, useRef, useEffect, useState } from "react";
 import RouteInfoContext from "../store/RouteInfoContext";
 import { RouteStationInfo } from "../types/route-station-info";
 import { faWheelchair } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import useAxios from "@/app/instances/use-axios";
+import { getRouteStationInfo } from "@/app/actions/get-route-station-info";
 
 interface StationInfoProps {
   staIndex: number;
@@ -14,19 +14,27 @@ export default function StationInfoBlock({
   staIndex,
   isOpen,
 }: StationInfoProps) {
-  const routeInfo = useContext(RouteInfoContext);
-  const [{ data, loading, error }, getStationInfo] = useAxios<RouteStationInfo>(
-    {
-      url: "route-station-info",
-      data: { ...routeInfo, staIndex },
-    },
-  );
+  const { routeCode, routeName, dir } = useContext(RouteInfoContext);
+  const [data, setData] = useState<RouteStationInfo | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const interval = useRef<number | null>(null);
   useEffect(() => {
+    if (!routeCode || !routeName || !dir) return;
     if (isOpen) {
-      getStationInfo().catch((e) => {});
+      setLoading(true);
+      getRouteStationInfo({ routeCode, routeName, dir, staIndex }).then(
+        (res) => {
+          setData(res);
+        },
+      );
       interval.current = window.setInterval(() => {
-        getStationInfo().catch((e) => {});
+        setLoading(true);
+        getRouteStationInfo({ routeCode, routeName, dir, staIndex }).then(
+          (res) => {
+            setData(res);
+            setLoading(false);
+          },
+        );
       }, 2500);
     } else {
       if (interval.current !== null) window.clearInterval(interval.current);
@@ -34,7 +42,7 @@ export default function StationInfoBlock({
     return () => {
       if (interval.current !== null) window.clearInterval(interval.current);
     };
-  }, [isOpen, getStationInfo]);
+  }, [isOpen, routeCode, routeName, dir, staIndex]);
   return (
     <div className="flex flex-col gap-2 pb-4 pl-2 pr-4">
       {data && data.length > 0 ? (

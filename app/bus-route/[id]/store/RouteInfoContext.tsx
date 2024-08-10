@@ -1,13 +1,10 @@
-import { createContext, ReactNode } from "react";
+import { createContext } from "react";
 
-const RouteInfoContext = createContext<
-  | {
-      routeCode?: string;
-      routeType?: string;
-      routeName: string;
-      dir: string;
-      busColor?: string;
-    }
-  | undefined
->(undefined);
+const RouteInfoContext = createContext<{
+  routeCode?: string;
+  routeType?: string;
+  routeName?: string;
+  dir?: string;
+  busColor?: string;
+}>({});
 export default RouteInfoContext;

@@ -3,7 +3,6 @@ import { BusInfo } from "../types/bus";
 import RouteInfoContext from "../store/RouteInfoContext";
 import { faBus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import useAxios from "@/app/instances/use-axios";
 
 interface StationLineProps {
   first: boolean;

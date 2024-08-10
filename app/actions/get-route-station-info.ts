@@ -1,40 +1,27 @@
-import { NextResponse } from "next/server";
-import APIInstance from "@/app/instances/axios";
-import { BusData, BusInfo } from "@/app/bus-route/[id]/types/bus";
-import { GeoTrafficData } from "@/app/bus-route/[id]/types/geo-traffic";
-import { LocationData } from "@/app/bus-route/[id]/types/location";
+"use server";
+
+import { BusInfo } from "@/app/bus-route/[id]/types/bus";
 import getDistance from "@/app/utils/getDistance";
+import { getBus } from "./get-bus";
+import { getLocation } from "./get-location";
+import { getTrafficWithRoute } from "./get-traffic-with-route";
 
-const requiredKeys = ["routeCode", "routeName", "dir", "staIndex"];
-
-export async function POST(request: Request) {
-  const params = await request.json();
-  if (typeof params !== "object")
-    return NextResponse.json({ error: "Bad Request" }, { status: 400 });
-
-  for (let k of requiredKeys) {
-    if (params?.[k] == null)
-      return NextResponse.json({ error: `Missing ${k}` }, { status: 400 });
-  }
-
-  const data = {
-    routeName: params["routeName"],
-    dir: params["dir"],
-    routeCode: params["routeCode"],
-  };
-
+export async function getRouteStationInfo({
+  routeCode,
+  routeName,
+  dir,
+  staIndex,
+}: {
+  routeCode: string;
+  routeName: string;
+  dir: string;
+  staIndex: number;
+}) {
   const [busData, locationData, geoTrafficData] = await Promise.all([
-    APIInstance.request<BusData>({ url: "bus", data }).then((res) => res.data),
-    APIInstance.request<LocationData>({ url: "location", data }).then(
-      (res) => res.data,
-    ),
-    APIInstance.request<GeoTrafficData>({
-      url: "geo-traffic",
-      data,
-    }).then((res) => res.data),
+    getBus({ routeName, dir }),
+    getLocation({ routeName, dir }),
+    getTrafficWithRoute({ routeCode, dir }),
   ]);
-
-  const staIndex = parseInt(params["staIndex"]);
 
   let buses: (BusInfo & {
     staIndex: number;
@@ -100,5 +87,5 @@ export async function POST(request: Request) {
     buses[i].distance = distance;
   }
 
-  return NextResponse.json(buses);
+  return buses;
 }

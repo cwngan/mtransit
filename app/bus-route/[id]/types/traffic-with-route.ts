@@ -1,4 +1,4 @@
-export interface GeoTrafficData {
+export interface TrafficWithRouteData {
   data: Data[];
   header: Header;
 }

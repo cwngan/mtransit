@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import useAxios from "@/app/instances/use-axios";
 import Header from "./components/Header";
 import StationList from "./components/StationList";
 import { RouteData, StationInfo } from "./types/route-info";
@@ -9,6 +8,9 @@ import { BusData, BusInfo } from "./types/bus";
 import { RouteDataWithBus } from "@/app/types/bus-route";
 import RouteInfoContext from "./store/RouteInfoContext";
 import { TrafficData } from "./types/traffic";
+import { getRouteData } from "@/app/actions/get-route-data";
+import { getBus } from "@/app/actions/get-bus";
+import { getTraffic } from "@/app/actions/get-traffic";
 
 export default function Page({ params: { id } }: { params: { id: string } }) {
   const searchParams = useSearchParams();
@@ -23,45 +25,29 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
   }>({ routeName: id, dir });
   const [currentRouteData, setCurrentRouteData] =
     useState<RouteDataWithBus | null>(null);
-  const [
-    { loading: routeDataLoading, data: routeData, error: routeDataError },
-    getRouteData,
-  ] = useAxios<RouteData>({
-    url: "route-data",
-    data: { routeName: id, dir },
-  });
-  const [
-    { loading: busDataLoading, data: busData, error: busDataError },
-    getBusData,
-  ] = useAxios<BusData>({
-    url: "bus",
-    data: { routeName: id, dir },
-  });
-  // const [
-  //   { loading: capacityLoading, data: capacity, error: capacityError },
-  //   getCapacity,
-  // ] = useAxios({
-  //   url: "capacity",
-  //   data: { routeName: id, dir },
-  // });
-  const [
-    { loading: trafficLoading, data: trafficData, error: trafficError },
-    getTraffic,
-  ] = useAxios<TrafficData>({
-    url: "traffic",
-  });
+  const [routeData, setRouteData] = useState<RouteData | null>(null);
+  const [busData, setBusData] = useState<BusData | null>(null);
+  const [trafficData, setTrafficData] = useState<TrafficData | null>(null);
 
   useEffect(() => {
-    if (!routeInfo.routeCode) return;
     const n = window.setInterval(() => {
-      getBusData();
-      getTraffic({ data: { ...routeInfo } });
-      // getCapacity();
+      if (!routeInfo.routeCode || !routeInfo.routeName || !routeInfo.dir)
+        return;
+      getBus({ routeName: routeInfo.routeName, dir: routeInfo.dir }).then(
+        (data) => {
+          setBusData(data);
+        },
+      );
+      getTraffic({ routeCode: routeInfo.routeCode, dir: routeInfo.dir }).then(
+        (data) => {
+          setTrafficData(data);
+        },
+      );
     }, 5000);
     return () => {
       window.clearInterval(n);
     };
-  }, [routeInfo]);
+  }, [routeInfo.dir, routeInfo.routeCode, routeInfo.routeName]);
 
   // useEffect(() => {
   //   getCapacity();
@@ -75,12 +61,18 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
 
   useEffect(() => {
     if (!routeInfo.routeCode || !routeInfo.dir) return;
-    getTraffic({ data: { ...routeInfo } });
-  }, [getTraffic, routeInfo]);
+    getTraffic({ routeCode: routeInfo.routeCode, dir: routeInfo.dir }).then(
+      (data) => {
+        setTrafficData(data);
+      },
+    );
+  }, [routeInfo.routeCode, routeInfo.dir]);
 
   useEffect(() => {
-    getRouteData().then((res) => {
-      let data = res.data as RouteDataWithBus;
+    if (!id || !dir) return;
+    getRouteData({ routeName: id, dir }).then((res) => {
+      setRouteData(res);
+      let data = res as RouteDataWithBus;
       if (!data.data) return;
       setRouteInfo((prev) => {
         return {
@@ -90,15 +82,17 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
         };
       });
     });
-  }, [getRouteData]);
+  }, [dir, id]);
 
   useEffect(() => {
-    getBusData().then((res) => {
+    if (!id || !dir) return;
+    getBus({ routeName: id, dir }).then((data) => {
+      setBusData(data);
       setRouteInfo((prev) => {
-        return { ...prev, busColor: res.data.data.busColor };
+        return { ...prev, busColor: data.data.busColor };
       });
     });
-  }, [getBusData]);
+  }, [dir, id]);
 
   useEffect(() => {
     if (!busData || !routeData?.data || !trafficData) return;

@@ -1,4 +1,4 @@
-import APIInstance from "@/app/instances/axios";
+import { getOperationTime } from "@/app/actions/get-operation-time";
 import { BusRouteBase } from "@/app/types/bus-route";
 import { useEffect, useRef, useState } from "react";
 
@@ -10,13 +10,9 @@ export default function OperationTime({ routeName, dir }: OperationTime) {
   useEffect(() => {
     if (init.current) return;
     init.current = true;
-    APIInstance.request({
-      url: "operation-time",
-      method: "POST",
-      data: { routeName, dir },
-    }).then((res) => {
-      setStartTime(res.data[0].data[0].firstBusTime);
-      setEndTime(res.data[0].data[0].lastBusTime);
+    getOperationTime({ routeName, dir }).then((data) => {
+      setStartTime(data[0].data[0].firstBusTime);
+      setEndTime(data[0].data[0].lastBusTime);
     });
   }, [dir, routeName]);
   return (
