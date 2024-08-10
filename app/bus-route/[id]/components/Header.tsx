@@ -3,6 +3,7 @@ import OperationTime from "./OperationTime";
 import { forwardRef, useContext } from "react";
 import RouteInfoContext from "../store/RouteInfoContext";
 import { useRouter } from "next/navigation";
+import LoadingPlaceholder from "@/app/components/LoadingPlaceholder";
 
 interface HeaderProps {
   routeName: string;
@@ -38,15 +39,17 @@ const Header = forwardRef<HTMLDivElement, HeaderProps>(function Header(
             </div>
           </div>
           <div className="col-span-9">
-            <div className="flex w-fit max-w-full items-center gap-1 rounded-lg bg-white px-2">
-              <div className="whitespace-nowrap">
-                {from ? from : "Loading..."}
+            {from && to ? (
+              <div className="flex w-fit max-w-full items-center gap-1 rounded-lg bg-white px-2">
+                <div className="whitespace-nowrap">{from}</div>
+                <div className="col-span-1">⇨</div>
+                <div className="overflow-hidden overflow-ellipsis whitespace-nowrap">
+                  {to}
+                </div>
               </div>
-              <div className="col-span-1">⇨</div>
-              <div className="overflow-hidden overflow-ellipsis whitespace-nowrap">
-                {to ? to : "Loading..."}
-              </div>
-            </div>
+            ) : (
+              <LoadingPlaceholder />
+            )}
           </div>
         </div>
         {routeInfo?.routeType === "0" ? (

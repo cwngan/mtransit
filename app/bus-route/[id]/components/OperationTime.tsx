@@ -1,4 +1,5 @@
 import { getOperationTime } from "@/app/actions/get-operation-time";
+import LoadingPlaceholder from "@/app/components/LoadingPlaceholder";
 import { BusRouteBase } from "@/app/types/bus-route";
 import { useEffect, useRef, useState } from "react";
 
@@ -19,13 +20,13 @@ export default function OperationTime({ routeName, dir }: OperationTime) {
     <div className="flex gap-2 border-b bg-white p-2 text-sm">
       <div className="flex">
         <div className="mr-1 rounded bg-yellow-300 px-1 font-mono">頭</div>
-        <div>{startTime ? startTime : "Loading"}</div>
+        <div>{startTime ? startTime : <LoadingPlaceholder width="3rem" />}</div>
       </div>
       <div className="flex">
         <div className="mr-1 rounded bg-indigo-900 px-1 font-mono text-white">
           尾
         </div>
-        <div>{endTime ? endTime : "Loading..."}</div>
+        <div>{endTime ? endTime : <LoadingPlaceholder width="3rem" />}</div>
       </div>
     </div>
   );

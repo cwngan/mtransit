@@ -124,7 +124,7 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
         dir={dir}
         ref={headerRef}
       />
-      <div style={{ paddingTop: `${headerRef.current?.clientHeight || 0}px` }}>
+      <div style={{ paddingTop: `${headerRef.current?.clientHeight || 80}px` }}>
         <StationList {...currentRouteData} />
       </div>
     </RouteInfoContext.Provider>

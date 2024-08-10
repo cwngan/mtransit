@@ -4,6 +4,7 @@ import { RouteStationInfo } from "../types/route-station-info";
 import { faWheelchair } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getRouteStationInfo } from "@/app/actions/get-route-station-info";
+import LoadingPlaceholder from "@/app/components/LoadingPlaceholder";
 
 interface StationInfoProps {
   staIndex: number;
@@ -124,7 +125,9 @@ export default function StationInfoBlock({
       ) : data && data.length == 0 ? (
         <div className="text-xl">未發車</div>
       ) : loading ? (
-        <div>Loading...</div>
+        <div>
+          <LoadingPlaceholder lines={2} width="12rem" />
+        </div>
       ) : (
         <div>Error</div>
       )}
