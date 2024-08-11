@@ -11,11 +11,13 @@ export async function getRouteStationInfo({
   routeName,
   dir,
   staIndex,
+  limit = 3,
 }: {
   routeCode: string;
   routeName: string;
   dir: string;
   staIndex: number;
+  limit?: number;
 }) {
   const [busData, locationData, geoTrafficData] = await Promise.all([
     getBus({ routeName, dir }),
@@ -33,7 +35,7 @@ export async function getRouteStationInfo({
     traffic: string;
   })[] = [];
   for (let i = staIndex; i >= 0; i--) {
-    if (buses.length >= 3) break;
+    if (buses.length >= limit) break;
     let bi = busData.data.routeInfo[i].busInfo;
     for (let bus of bi) {
       if (i === staIndex && bus.status === "0") continue;
