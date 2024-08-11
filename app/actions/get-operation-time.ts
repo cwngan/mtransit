@@ -12,7 +12,7 @@ export async function getOperationTime({
   const data = new URLSearchParams({
     action: "opstime",
     routeName,
-    dir,
+    dir: routeName === "25B" ? "0" : dir,
     lang: "zh_tw",
     BypassToken: "HuatuTesting0307",
   });
@@ -20,5 +20,6 @@ export async function getOperationTime({
     url: "ddbus/route/operationtime",
     data,
   });
+  console.log(data);
   return result.data;
 }
