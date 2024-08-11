@@ -23,9 +23,14 @@ const Header = forwardRef<HTMLDivElement, HeaderProps>(function Header(
       <div
         className={`${routeInfo?.busColor === "Orange" ? "bg-tcm-orange" : routeInfo?.busColor === "Blue" ? "bg-transmac-yellow" : ""} grid grid-cols-12 items-center gap-2 p-2`}
       >
-        <div>
+        <div
+          onClick={() => {
+            router.push("/");
+          }}
+          className="flex cursor-pointer justify-center"
+        >
           <HomeIcon
-            className={`${routeInfo?.busColor === "Orange" ? "stroke-tcm-brown" : routeInfo?.busColor === "Blue" ? "stroke-transmac-blue" : ""}`}
+            className={`h-6 w-6 ${routeInfo?.busColor === "Orange" ? "stroke-tcm-brown" : routeInfo?.busColor === "Blue" ? "stroke-transmac-blue" : ""}`}
           />
         </div>
         <div className="col-span-10 grid grid-cols-11 items-center justify-start gap-2">
@@ -53,9 +58,9 @@ const Header = forwardRef<HTMLDivElement, HeaderProps>(function Header(
           </div>
         </div>
         {routeInfo?.routeType === "0" ? (
-          <div>
+          <div className="flex cursor-pointer justify-center">
             <ArrowsRightLeftIcon
-              className="stroke-white"
+              className="h-6 w-6 stroke-white"
               onClick={() => {
                 router.push(`?dir=${dir === "0" ? "1" : "0"}`);
               }}
