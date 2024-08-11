@@ -17,25 +17,26 @@ export default function StationInfoBlock({
 }: StationInfoProps) {
   const { routeCode, routeName, dir } = useContext(RouteInfoContext);
   const [data, setData] = useState<RouteStationInfo | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
   const interval = useRef<number | null>(null);
   useEffect(() => {
     if (!routeCode || !routeName || !dir) return;
     if (isOpen) {
-      setLoading(true);
-      getRouteStationInfo({ routeCode, routeName, dir, staIndex }).then(
-        (res) => {
+      getRouteStationInfo({ routeCode, routeName, dir, staIndex })
+        .then((res) => {
           setData(res);
-        },
-      );
+        })
+        .catch(() => {
+          setError(true);
+        });
       interval.current = window.setInterval(() => {
-        setLoading(true);
-        getRouteStationInfo({ routeCode, routeName, dir, staIndex }).then(
-          (res) => {
+        getRouteStationInfo({ routeCode, routeName, dir, staIndex })
+          .then((res) => {
             setData(res);
-            setLoading(false);
-          },
-        );
+          })
+          .catch(() => {
+            setError(true);
+          });
       }, 2500);
     } else {
       if (interval.current !== null) window.clearInterval(interval.current);
@@ -124,12 +125,12 @@ export default function StationInfoBlock({
         })
       ) : data && data.length == 0 ? (
         <div className="text-xl">未發車</div>
-      ) : loading ? (
+      ) : error ? (
+        <div>Error</div>
+      ) : (
         <div>
           <LoadingPlaceholder lines={2} width="12rem" />
         </div>
-      ) : (
-        <div>Error</div>
       )}
       {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
     </div>
