@@ -9,8 +9,6 @@ export default function OperationTime({ routeName, dir }: OperationTime) {
   const [startTime, setStartTime] = useState<string | null>(null);
   const [endTime, setEndTime] = useState<string | null>(null);
   useEffect(() => {
-    if (init.current) return;
-    init.current = true;
     getOperationTime({ routeName, dir }).then((data) => {
       setStartTime(data[0].data[0].firstBusTime);
       setEndTime(data[0].data[0].lastBusTime);
