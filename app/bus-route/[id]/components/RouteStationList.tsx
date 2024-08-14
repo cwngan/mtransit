@@ -1,11 +1,11 @@
 import { RouteDataWithBus } from "@/app/types/bus-route";
 import { BusInfo } from "../types/bus";
 import { StationInfo } from "../types/route-info";
-import StationBlock from "./StationBlock";
+import RouteStationBlock from "./RouteStationBlock";
 import { useState } from "react";
 import LoadingPlaceholder from "@/app/components/LoadingPlaceholder";
 
-export default function StationList({ data }: RouteDataWithBus) {
+export default function RouteStationList({ data }: RouteDataWithBus) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   return (
     <div>
@@ -16,7 +16,7 @@ export default function StationList({ data }: RouteDataWithBus) {
             index,
           ) => {
             return (
-              <StationBlock
+              <RouteStationBlock
                 {...station}
                 key={index + station.staCode}
                 first={index === 0}
@@ -35,9 +35,9 @@ export default function StationList({ data }: RouteDataWithBus) {
           },
         )
       ) : (
-        <div className="relative p-4">
+        <div className="relative flex flex-col p-4">
           <div className="from-0 absolute z-10 h-full w-full bg-gradient-to-b from-transparent to-white to-100%"></div>
-          <LoadingPlaceholder lines={10} gap="1rem" lineHeight="2.25rem" />
+          <LoadingPlaceholder lines={10} lineHeight="2.25rem" gap="1rem" />
         </div>
       )}
     </div>

@@ -2,6 +2,7 @@ import range from "../utils/range";
 
 interface LoadingPlaceholderProps {
   lines?: number;
+  blocks?: number;
   width?: string;
   lineHeight?: string;
   gap?: string;
@@ -9,6 +10,7 @@ interface LoadingPlaceholderProps {
 }
 export default function LoadingPlaceholder({
   lines = 1,
+  blocks,
   width,
   lineHeight = "1.5em",
   gap = "0.5rem",
@@ -16,7 +18,7 @@ export default function LoadingPlaceholder({
 }: LoadingPlaceholderProps) {
   return (
     <>
-      {range(0, lines).map((a, i) => {
+      {range(0, blocks ? blocks : lines).map((a, i) => {
         return (
           <div
             key={i}
@@ -25,7 +27,9 @@ export default function LoadingPlaceholder({
               width: width
                 ? width
                 : random
-                  ? `${50 * Math.random() + 50}%`
+                  ? blocks
+                    ? `${40 * Math.random() + 10}%`
+                    : `${50 * Math.random() + 50}%`
                   : "100%",
               height: lineHeight,
               marginBottom: i < lines - 1 ? gap : "0",

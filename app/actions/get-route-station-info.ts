@@ -5,20 +5,28 @@ import getDistance from "@/app/utils/getDistance";
 import { getBus } from "./get-bus";
 import { getLocation } from "./get-location";
 import { getTrafficWithRoute } from "./get-traffic-with-route";
+import { getRouteData } from "./get-route-data";
 
 export async function getRouteStationInfo({
   routeCode,
   routeName,
   dir,
   staIndex,
+  staCode,
   limit = 3,
 }: {
-  routeCode: string;
+  routeCode?: string;
   routeName: string;
   dir: string;
-  staIndex: number;
+  staIndex?: number;
+  staCode?: string;
   limit?: number;
 }) {
+  if (!routeCode) {
+    let tmp = await getRouteData({ routeName, dir });
+    if (!tmp.data?.routeCode) return [];
+    routeCode = tmp.data.routeCode;
+  }
   const [busData, locationData, geoTrafficData] = await Promise.all([
     getBus({ routeName, dir }),
     getLocation({ routeName, dir }),
@@ -28,12 +36,21 @@ export async function getRouteStationInfo({
   let buses: (BusInfo & {
     staIndex: number;
     staCode: string;
+    staRemaining: number;
     staName: string;
     lat: string;
     lon: string;
     distance: number;
     traffic: string;
   })[] = [];
+
+  if (staIndex === undefined) {
+    staIndex = busData.data.routeInfo.findIndex(
+      (sta) => sta.staCode === staCode,
+    );
+    if (staIndex === -1) return [];
+  }
+
   for (let i = staIndex; i >= 0; i--) {
     if (buses.length >= limit) break;
     let bi = busData.data.routeInfo[i].busInfo;
@@ -47,6 +64,7 @@ export async function getRouteStationInfo({
         staCode: locationData.data.stationInfoList[i].stationCode,
         staName: locationData.data.stationInfoList[i].stationName,
         staIndex: i,
+        staRemaining: staIndex - i,
         lat: location?.latitude || "0",
         lon: location?.longitude || "0",
         distance: 0,

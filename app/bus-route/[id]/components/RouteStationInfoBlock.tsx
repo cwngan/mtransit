@@ -6,15 +6,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getRouteStationInfo } from "@/app/actions/get-route-station-info";
 import LoadingPlaceholder from "@/app/components/LoadingPlaceholder";
 
-interface StationInfoProps {
+interface RouteStationInfoProps {
   staIndex: number;
   isOpen: boolean;
 }
 
-export default function StationInfoBlock({
+export default function RouteStationInfoBlock({
   staIndex,
   isOpen,
-}: StationInfoProps) {
+}: RouteStationInfoProps) {
   const { routeCode, routeName, dir } = useContext(RouteInfoContext);
   const [data, setData] = useState<RouteStationInfo | null>(null);
   const [error, setError] = useState<boolean>(false);

@@ -64,6 +64,6 @@ export async function getLocation({
     url: "macauweb/routestation/location",
     data,
   });
-  updateDatabase(result.data, routeName, dir);
+  // updateDatabase(result.data, routeName, dir);
   return result.data;
 }

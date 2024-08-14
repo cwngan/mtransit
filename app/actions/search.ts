@@ -6,6 +6,7 @@ export default async function search({ query }: { query: string }) {
   const { data, error } = await supabase
     .rpc("get_all_routes_with_origin_and_destination")
     .ilike("name", `%${query}%`)
-    .select("*");
+    .select("*")
+    .limit(10);
   return data;
 }

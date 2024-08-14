@@ -11,49 +11,49 @@ export type Database = {
     Tables: {
       route_info: {
         Row: {
-          change: boolean | null
+          change: boolean
           code: string | null
-          color: string | null
-          company: string | null
+          color: string
+          company: string
           created_at: string
           destination: string | null
-          direction: number | null
+          direction: number
           id: number
-          key: string | null
-          name: string | null
+          key: string
+          name: string
           origin: string | null
           stations: string[] | null
-          type: number | null
+          type: number
         }
         Insert: {
-          change?: boolean | null
+          change: boolean
           code?: string | null
-          color?: string | null
-          company?: string | null
+          color: string
+          company: string
           created_at?: string
           destination?: string | null
-          direction?: number | null
+          direction: number
           id?: number
-          key?: string | null
-          name?: string | null
+          key: string
+          name: string
           origin?: string | null
           stations?: string[] | null
-          type?: number | null
+          type: number
         }
         Update: {
-          change?: boolean | null
+          change?: boolean
           code?: string | null
-          color?: string | null
-          company?: string | null
+          color?: string
+          company?: string
           created_at?: string
           destination?: string | null
-          direction?: number | null
+          direction?: number
           id?: number
-          key?: string | null
-          name?: string | null
+          key?: string
+          name?: string
           origin?: string | null
           stations?: string[] | null
-          type?: number | null
+          type?: number
         }
         Relationships: [
           {
@@ -134,12 +134,32 @@ export type Database = {
           routes: string[] | null
         }
       }
+      find_nearest_station: {
+        Args: {
+          target_lat: number
+          target_lon: number
+        }
+        Returns: {
+          id: string
+          name_zh: string
+          name_pt: string
+          name_en: string
+          routes: string[]
+          lat: number
+          lon: number
+          lane_name: string
+          created_at: string
+          code: string
+          distance: number
+        }[]
+      }
       get_all_routes_with_origin_and_destination: {
         Args: Record<PropertyKey, never>
         Returns: {
           code: string
           color: string
           company: string
+          change: boolean
           direction: string
           name: string
           key: string

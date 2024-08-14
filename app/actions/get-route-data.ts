@@ -22,7 +22,7 @@ async function updateDatabase(
       direction: 0,
       change: route.routeChange === "1",
       name: route.routeName,
-      name_direction: `${route.routeName}_${0}`,
+      key: `${route.routeName}_${0}`,
     });
     if (route.direction === "0")
       rowsToAdd.push({
@@ -32,7 +32,7 @@ async function updateDatabase(
         direction: 1,
         change: route.routeChange === "1",
         name: route.routeName,
-        name_direction: `${route.routeName}_${1}`,
+        key: `${route.routeName}_${1}`,
       });
   }
   await supabase.from("route_info").insert(rowsToAdd);
@@ -86,7 +86,7 @@ export async function getRouteData({
   if (!returnData.data) return { data: { error: "No data." } } as RouteData;
   returnData.data.routeType = routeType;
 
-  updateDatabase(routeList, result.data, routeName, dir);
+  // updateDatabase(routeList, result.data, routeName, dir);
 
   return returnData;
 }

@@ -1,9 +1,9 @@
 import { BusInfo } from "../types/bus";
 import { StationInfo } from "../types/route-info";
-import StationLine from "./StationLine";
-import StationInfoBlock from "./StationInfoBlock";
+import RouteStationLine from "./RouteStationLine";
+import RouteStationInfoBlock from "./RouteStationInfoBlock";
 
-type StationBlockProps = StationInfo & { busInfo: BusInfo[] } & {
+type RouteStationBlockProps = StationInfo & { busInfo: BusInfo[] } & {
   first: boolean;
   last: boolean;
   staIndex: number;
@@ -13,7 +13,7 @@ type StationBlockProps = StationInfo & { busInfo: BusInfo[] } & {
   traffic: string;
 };
 
-export default function StationBlock({
+export default function RouteStationBlock({
   isOpen,
   open,
   close,
@@ -24,10 +24,10 @@ export default function StationBlock({
   first,
   last,
   traffic,
-}: StationBlockProps) {
+}: RouteStationBlockProps) {
   return (
     <div className={`grid grid-cols-12 ${isOpen ? "bg-gray-100" : "bg-white"}`}>
-      <StationLine
+      <RouteStationLine
         busInfo={busInfo}
         first={first}
         last={last}
@@ -47,7 +47,7 @@ export default function StationBlock({
           <div>{staName}</div>
         </div>
         {isOpen ? (
-          <StationInfoBlock staIndex={staIndex} isOpen={isOpen} />
+          <RouteStationInfoBlock staIndex={staIndex} isOpen={isOpen} />
         ) : null}
       </div>
     </div>

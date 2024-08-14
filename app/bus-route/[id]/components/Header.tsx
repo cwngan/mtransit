@@ -4,6 +4,7 @@ import { forwardRef, useContext } from "react";
 import RouteInfoContext from "../store/RouteInfoContext";
 import { useRouter } from "next/navigation";
 import LoadingPlaceholder from "@/app/components/LoadingPlaceholder";
+import clsx from "clsx";
 
 interface HeaderProps {
   routeName: string;
@@ -21,7 +22,10 @@ const Header = forwardRef<HTMLDivElement, HeaderProps>(function Header(
   return (
     <div className="fixed z-50 w-full" ref={ref}>
       <div
-        className={`${routeInfo?.busColor === "Orange" ? "bg-tcm-orange" : routeInfo?.busColor === "Blue" ? "bg-transmac-yellow" : ""} grid grid-cols-12 items-center gap-2 p-2`}
+        className={clsx(
+          `${routeInfo?.busColor === "Orange" ? "bg-tcm-orange" : routeInfo?.busColor === "Blue" ? "bg-transmac-yellow" : ""}`,
+          "grid grid-cols-12 items-center gap-2 p-2",
+        )}
       >
         <div
           onClick={() => {
@@ -30,12 +34,26 @@ const Header = forwardRef<HTMLDivElement, HeaderProps>(function Header(
           className="flex cursor-pointer justify-center"
         >
           <HomeIcon
-            className={`h-6 w-6 ${routeInfo?.busColor === "Orange" ? "stroke-tcm-brown" : routeInfo?.busColor === "Blue" ? "stroke-transmac-blue" : ""}`}
+            className={clsx(
+              "h-6 w-6",
+              routeInfo?.busColor === "Orange"
+                ? "stroke-tcm-brown"
+                : routeInfo?.busColor === "Blue"
+                  ? "stroke-transmac-blue"
+                  : "",
+            )}
           />
         </div>
         <div className="col-span-10 grid grid-cols-11 items-center justify-start gap-2">
           <div
-            className={`col-span-2 ${routeInfo?.busColor === "Orange" ? "bg-tcm-brown" : routeInfo?.busColor === "Blue" ? "bg-transmac-blue" : ""} rounded-lg text-center font-bold`}
+            className={clsx(
+              "col-span-2 rounded-lg text-center font-bold",
+              routeInfo?.busColor === "Orange"
+                ? "bg-tcm-brown"
+                : routeInfo?.busColor === "Blue"
+                  ? "bg-transmac-blue"
+                  : "",
+            )}
           >
             <div
               className={`${!routeInfo?.busColor ? "text-black" : "text-white"}`}

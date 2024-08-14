@@ -1,7 +1,7 @@
 export interface RouteListData {
   code: string;
-  color: Color;
-  company: Company;
+  color: string;
+  company: string;
   direction: string;
   name: string;
   key: string;

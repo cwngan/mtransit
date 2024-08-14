@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Header from "./components/Header";
-import StationList from "./components/StationList";
+import RouteStationList from "./components/RouteStationList";
 import { RouteData, StationInfo } from "./types/route-info";
 import { BusData, BusInfo } from "./types/bus";
 import { RouteDataWithBus } from "@/app/types/bus-route";
@@ -125,7 +125,7 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
         ref={headerRef}
       />
       <div style={{ paddingTop: `${headerRef.current?.clientHeight || 80}px` }}>
-        <StationList {...currentRouteData} />
+        <RouteStationList {...currentRouteData} />
       </div>
     </RouteInfoContext.Provider>
   );
