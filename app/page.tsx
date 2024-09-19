@@ -10,7 +10,7 @@ export default function Page() {
   const [currentTab, setCurrentTab] = useState<number>(0);
   return (
     <CurrentTabContext.Provider value={currentTab}>
-      <div className="container mx-auto">
+      <div className="container mx-auto flex h-full max-h-full flex-col">
         <SearchBar />
         <div className={clsx("grid w-full grid-cols-2")}>
           <div
@@ -40,11 +40,11 @@ export default function Page() {
             收藏站點
           </div>
         </div>
-        <div>
+        <div className="flex-grow">
           <div
             className={clsx(
               currentTab === 0 ? "block" : "hidden",
-              "rounded-tr-xl bg-cyan-600",
+              "h-full rounded-tr-xl bg-cyan-600",
             )}
           >
             <NearbyStationInfoList />

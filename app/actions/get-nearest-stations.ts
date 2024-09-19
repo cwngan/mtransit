@@ -11,17 +11,14 @@ export interface NearestStationsData {
   status: number;
 }
 
-export default async function getNearestStations(
-  prevState: NearestStationsData | null,
-  {
-    position,
-  }: {
-    position: {
-      latitude: number;
-      longitude: number;
-    };
-  },
-): Promise<NearestStationsData> {
+export default async function getNearestStations({
+  position,
+}: {
+  position: {
+    latitude: number;
+    longitude: number;
+  };
+}): Promise<NearestStationsData> {
   if (!supabase) return { error: "could not connect to db.", status: 500 };
   const res = await supabase
     .rpc("find_nearest_station", {

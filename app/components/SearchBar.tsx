@@ -48,7 +48,7 @@ export default function SearchBar() {
             )
           ) : (
             <div className="w-full">
-              <div className="from-0 absolute z-10 h-full w-full bg-gradient-to-b from-transparent to-white to-100%"></div>
+              {/* <div className="from-0 absolute z-10 h-full w-full bg-gradient-to-b from-transparent to-white to-100%"></div> */}
               <div className="flex flex-row flex-wrap gap-2">
                 <LoadingPlaceholder
                   blocks={3}
