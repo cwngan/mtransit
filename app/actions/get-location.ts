@@ -72,7 +72,8 @@ export async function getLocation({
       token: getRequestToken("/routestation/location", data),
     },
   });
-  console.log(getRequestToken("/routestation/location", data));
+  console.log(result.headers);
+  console.log(result.data);
   // updateDatabase(result.data, routeName, dir);
   return result.data;
 }

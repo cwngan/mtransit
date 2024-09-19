@@ -5,7 +5,6 @@ var MD5 = function(d: string){var r = M(V(Y(X(d),8*d.length)));return r.toLowerC
 
 export default function getRequestToken(e: string, t: {[key: string] : string}) {
   var n = "";
-  console.log(Object.keys(t));
   if (t) {
       Object.keys(t).map(function(e, r) {
           n += (0 === r ? "" : "&") + e + "=" + t[e]
