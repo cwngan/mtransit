@@ -29,7 +29,7 @@ export async function getRouteStationInfo({
   }
   const [busData, locationData, geoTrafficData] = await Promise.all([
     getBus({ routeName, dir }),
-    getLocation({ routeName, dir }),
+    getLocation({ routeName, dir, routeCode }),
     getTrafficWithRoute({ routeCode, dir }),
   ]);
 

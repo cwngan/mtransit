@@ -3,6 +3,7 @@
 import DSATInstance from "../instance";
 import { LocationData } from "../bus-route/[id]/types/location";
 import { supabase } from "../instances/supabase";
+import getRequestToken from "../utils/getRequestToken";
 
 async function updateDatabase(
   data: LocationData,
@@ -50,20 +51,28 @@ async function updateDatabase(
 export async function getLocation({
   routeName,
   dir,
+  routeCode,
 }: {
   routeName: string;
   dir: string;
+  routeCode: string;
 }) {
-  const data = new URLSearchParams({
+  const data = {
     routeName,
     dir,
     lang: "zh_tw",
-  });
+    routeCode,
+    device: "web",
+  };
   const result = await DSATInstance.request<LocationData>({
     method: "POST",
     url: "macauweb/routestation/location",
-    data,
+    data: new URLSearchParams(data),
+    headers: {
+      token: getRequestToken("/routestation/location", data),
+    },
   });
+  console.log(getRequestToken("/routestation/location", data));
   // updateDatabase(result.data, routeName, dir);
   return result.data;
 }
