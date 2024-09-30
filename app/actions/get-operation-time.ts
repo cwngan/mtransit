@@ -20,6 +20,6 @@ export async function getOperationTime({
     url: "ddbus/route/operationtime",
     data,
   });
-  console.log(data);
+  // console.log(data);
   return result.data;
 }
