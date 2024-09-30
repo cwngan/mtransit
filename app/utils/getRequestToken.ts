@@ -14,8 +14,9 @@ export default function getRequestToken(e: string, t: {[key: string] : string}) 
   var r = MD5(n)
     , o = moment().format("YYYYMMDDHHmm");
   let rr = r.split("");
+  console.log(r, o);
   return rr.splice(24, 0, o.slice(8)),
-  rr.splice(12, 0, o.slice(4, 8)),
-  rr.splice(4, 0, o.slice(0, 4)),
-  rr.join("")
+         rr.splice(12, 0, o.slice(4, 8)),
+         rr.splice(4, 0, o.slice(0, 4)),
+         rr.join("");
 };
