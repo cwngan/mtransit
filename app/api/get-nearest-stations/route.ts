@@ -1,21 +1,16 @@
 "use server";
 
 import { supabase } from "@/app/instances/supabase";
-import { Database } from "@/database.types";
 import { NextRequest, NextResponse } from "next/server";
-
-export interface NearestStationsData {
-  error?: string;
-  data?:
-    | Database["public"]["Functions"]["find_nearest_station"]["Returns"]
-    | null;
-  status: number;
-}
 
 const requiredKeys = ["position"];
 
 export async function POST(request: NextRequest) {
-  if (!supabase) return { error: "could not connect to db.", status: 500 };
+  if (!supabase)
+    return NextResponse.json({
+      error: "could not connect to db.",
+      status: 500,
+    });
   const params = await request.json();
   if (typeof params !== "object")
     return NextResponse.json({ error: "Bad Request" }, { status: 400 });

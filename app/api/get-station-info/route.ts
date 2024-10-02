@@ -52,11 +52,15 @@ export async function POST(request: NextRequest) {
     staCode: string;
   } = params;
 
-  if (!supabase) return { error: "could not connect to db.", status: 500 };
+  if (!supabase)
+    return NextResponse.json({
+      error: "could not connect to db.",
+      status: 500,
+    });
   const res = await supabase.from("stations").select("*").eq("code", staCode);
   const routeKeys = res.data?.[0]?.routes;
   if (!routeKeys || routeKeys.length === 0)
-    return { error: "no data.", status: 500 };
+    return NextResponse.json({ error: "no data.", status: 500 });
   const routes = await Promise.all(
     routeKeys.map(async (key) => {
       if (!supabase) return;
