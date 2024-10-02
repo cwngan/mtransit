@@ -18,9 +18,9 @@ const DSATInstance = axios.create({
     "X-Requested-With": "XMLHttpRequest",
   },
 });
-DSATInstance.defaults.timeout = 2000;
+DSATInstance.defaults.timeout = 750;
 axiosRetry(DSATInstance, {
-  retries: 5,
+  retries: 10,
   shouldResetTimeout: true,
   retryCondition: (_error) => true,
 });
