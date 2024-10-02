@@ -37,10 +37,10 @@ async function updateDatabase(
         key: `${route.routeName}_${1}`,
       });
   }
-  await supabase.from("route_info").insert(rowsToAdd);
+  await supabase.from("route_info").upsert(rowsToAdd, { onConflict: "key" });
   // update route data
   if (routeData.data?.routeInfo) {
-    await supabase
+    const res = await supabase
       .from("route_info")
       .update({
         origin: routeData.data.routeInfo[0].staCode,
@@ -48,7 +48,8 @@ async function updateDatabase(
         code: routeData.data.routeCode,
         stations: routeData.data.routeInfo.map((sta) => sta.staCode),
       })
-      .eq("name_direction", `${routeName}_${dir}`);
+      .eq("key", `${routeName}_${dir}`);
+    // console.log(res)
   }
 }
 

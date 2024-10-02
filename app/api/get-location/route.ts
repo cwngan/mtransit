@@ -22,16 +22,19 @@ async function updateDatabase(
           if (value.data?.length === 0) {
             supabase
               .from("stations")
-              .insert([
-                {
-                  code: sta.stationCode,
-                  name_zh: sta.stationName,
-                  lat: parseFloat(sta.latitude),
-                  lon: parseFloat(sta.longitude),
-                  lane_name: sta.laneName ? sta.laneName : null,
-                  routes: [`${routeName}_${dir}`],
-                },
-              ])
+              .upsert(
+                [
+                  {
+                    code: sta.stationCode,
+                    name_zh: sta.stationName,
+                    lat: parseFloat(sta.latitude),
+                    lon: parseFloat(sta.longitude),
+                    lane_name: sta.laneName ? sta.laneName : null,
+                    routes: [`${routeName}_${dir}`],
+                  },
+                ],
+                { onConflict: "code" },
+              )
               .then(() => {
                 // console.log("Insert success");
               });
