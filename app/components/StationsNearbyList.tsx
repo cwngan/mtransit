@@ -55,7 +55,6 @@ export default function StationsNearbyList() {
       window.localStorage.getItem("stationsNearby");
     if (dataString !== null) {
       const data = JSON.parse(dataString);
-      console.log(data);
       setStationsNearby({ data, status: 200 });
     }
   }, []);
@@ -95,7 +94,11 @@ export default function StationsNearbyList() {
           ) : stationsNearby?.data ? (
             stationsNearby.data.map((station) => {
               return (
-                <StationInfoBlock staCode={station.code} key={station.id} />
+                <StationInfoBlock
+                  staCode={station.code}
+                  key={station.id}
+                  fromTab={0}
+                />
               );
             })
           ) : null}

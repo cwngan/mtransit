@@ -4,9 +4,10 @@ import clsx from "clsx";
 import { useState } from "react";
 import CurrentTabContext from "./store/CurrentTabContext";
 import StationsNearbyList from "./components/StationsNearbyList";
+import FavoriteStationsList from "./components/FavoriteStationsList";
 
 export default function Page() {
-  const [currentTab, setCurrentTab] = useState<number>(0);
+  const [currentTab, setCurrentTab] = useState<number>(1);
   return (
     <CurrentTabContext.Provider value={currentTab}>
       <div className="container mx-auto flex h-full max-h-full flex-col">
@@ -48,7 +49,14 @@ export default function Page() {
           >
             <StationsNearbyList />
           </div>
-          <div className={clsx(currentTab === 1 ? "block" : "hidden")}>hi</div>
+          <div
+            className={clsx(
+              currentTab === 1 ? "block" : "hidden",
+              "h-full rounded-tl-xl bg-orange-600",
+            )}
+          >
+            <FavoriteStationsList />
+          </div>
         </div>
       </div>
     </CurrentTabContext.Provider>

@@ -16,10 +16,12 @@ const getStationInfo = async (data: { staCode: string }) => {
 
 interface StationInfoBlock {
   staCode: string;
+  fromTab: number;
   staName?: string;
 }
 export default function StationInfoBlock({
   staCode,
+  fromTab,
   staName,
 }: StationInfoBlock) {
   const [stationInfo, setStationInfo] = useState<StationInfoData | null>(null);
@@ -30,7 +32,7 @@ export default function StationInfoBlock({
     });
   }, [staCode]);
   useEffect(() => {
-    if (currentTab !== 0) return;
+    if (currentTab !== fromTab) return;
     updateData();
     const n = window.setInterval(updateData, 15000);
     return () => {
