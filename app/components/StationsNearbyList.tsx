@@ -17,7 +17,7 @@ const getStationsNearby = async (data: {
   });
 };
 
-export default function NearbyStationInfoList() {
+export default function StationsNearbyList() {
   const [position, setPosition] = useState<GeolocationCoordinates | null>(null);
   const [gettingPosition, setGettingPosition] = useState<boolean>(false);
   const [stationsNearby, setStationsNearby] =

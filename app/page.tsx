@@ -1,10 +1,9 @@
 "use client";
 import SearchBar from "./components/SearchBar";
-import NearbyStationInfoList from "./components/NearbyStationInfoList";
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import clsx from "clsx";
 import { useState } from "react";
 import CurrentTabContext from "./store/CurrentTabContext";
+import StationsNearbyList from "./components/StationsNearbyList";
 
 export default function Page() {
   const [currentTab, setCurrentTab] = useState<number>(0);
@@ -47,7 +46,7 @@ export default function Page() {
               "h-full rounded-tr-xl bg-cyan-600",
             )}
           >
-            <NearbyStationInfoList />
+            <StationsNearbyList />
           </div>
           <div className={clsx(currentTab === 1 ? "block" : "hidden")}>hi</div>
         </div>
