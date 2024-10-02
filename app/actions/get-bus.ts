@@ -2,6 +2,7 @@
 
 import DSATInstance from "../instance";
 import { BusData } from "../bus-route/[id]/types/bus";
+import getRequestToken from "../utils/getRequestToken";
 
 export async function getBus({
   routeName,
@@ -10,15 +11,18 @@ export async function getBus({
   routeName: string;
   dir: string;
 }) {
-  const data = new URLSearchParams({
+  const data = {
     action: "dy",
     routeName,
     dir,
     lang: "zh_tw",
-  });
+  };
   const result = await DSATInstance.request<BusData>({
     url: "macauweb/routestation/bus",
-    data,
+    data: new URLSearchParams(data),
+    headers: {
+      token: getRequestToken("macauweb/routestation/bus", data),
+    },
   });
   return result.data;
 }

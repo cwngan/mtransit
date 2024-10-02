@@ -1,6 +1,7 @@
 "use server";
 
 import DSATInstance from "../instance";
+import getRequestToken from "../utils/getRequestToken";
 
 export default async function getCapactiy({
   routeName,
@@ -18,6 +19,9 @@ export default async function getCapactiy({
     method: "GET",
     url: "ddbus/common/station/capacity",
     params: reqParams,
+    headers: {
+      token: getRequestToken("ddbus/common/station/capacity", reqParams),
+    },
   });
   return result.data;
 }

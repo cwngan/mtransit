@@ -1,7 +1,16 @@
-import { getOperationTime } from "@/app/actions/get-operation-time";
 import LoadingPlaceholder from "@/app/components/LoadingPlaceholder";
+import { APIInstance } from "@/app/instances/axios";
 import { BusRouteBase } from "@/app/types/bus-route";
 import { useEffect, useRef, useState } from "react";
+
+const getOperationTime = async (data: { routeName: string; dir: string }) => {
+  return new Promise<any>((resolve, reject) => {
+    APIInstance.request({
+      url: "get-operation-time",
+      data,
+    }).then((res) => resolve(res.data));
+  });
+};
 
 interface OperationTime extends BusRouteBase {}
 export default function OperationTime({ routeName, dir }: OperationTime) {

@@ -8,9 +8,37 @@ import { BusData, BusInfo } from "./types/bus";
 import { RouteDataWithBus } from "@/app/types/bus-route";
 import RouteInfoContext from "./store/RouteInfoContext";
 import { TrafficData } from "./types/traffic";
-import { getRouteData } from "@/app/actions/get-route-data";
-import { getBus } from "@/app/actions/get-bus";
-import { getTraffic } from "@/app/actions/get-traffic";
+import { APIInstance } from "@/app/instances/axios";
+
+const getBus = async (data: { routeName: string; dir: string }) => {
+  return new Promise<BusData>(async (resolve, reject) => {
+    APIInstance.request<BusData>({ url: "get-bus", data })
+      .then((res) => resolve(res.data))
+      .catch((reason) => reject(reason));
+  });
+};
+
+const getTraffic = async (data: { routeCode: string; dir: string }) => {
+  return new Promise<TrafficData>(async (resolve, reject) => {
+    APIInstance.request<TrafficData>({
+      url: "get-traffic",
+      data,
+    })
+      .then((res) => resolve(res.data))
+      .catch((reason) => reject(reason));
+  });
+};
+
+const getRouteData = async (data: { routeName: string; dir: string }) => {
+  return new Promise<RouteData>(async (resolve, reject) => {
+    APIInstance.request<RouteData>({
+      url: "get-route-data",
+      data,
+    })
+      .then((res) => resolve(res.data))
+      .catch((reason) => reject(reason));
+  });
+};
 
 export default function Page({ params: { id } }: { params: { id: string } }) {
   const searchParams = useSearchParams();

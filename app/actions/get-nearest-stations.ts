@@ -3,14 +3,6 @@
 import { Database } from "@/database.types";
 import { supabase } from "../instances/supabase";
 
-export interface NearestStationsData {
-  error?: string;
-  data?:
-    | Database["public"]["Functions"]["find_nearest_station"]["Returns"]
-    | null;
-  status: number;
-}
-
 export default async function getNearestStations({
   position,
 }: {

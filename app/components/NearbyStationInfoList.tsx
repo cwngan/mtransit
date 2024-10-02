@@ -2,10 +2,20 @@ import { Button } from "@headlessui/react";
 import clsx from "clsx";
 import { useState, useCallback, useEffect, useActionState } from "react";
 import StationInfoBlock from "./StationInfoBlock";
-import getNearestStations, {
-  NearestStationsData,
-} from "../actions/get-nearest-stations";
 import LoadingPlaceholder from "./LoadingPlaceholder";
+import { NearestStationsData } from "../types/data";
+import { APIInstance } from "../instances/axios";
+
+const getNearestStations = async (data: {
+  position: { latitude: number; longitude: number };
+}) => {
+  return new Promise<NearestStationsData>((resolve, reject) => {
+    APIInstance.request<NearestStationsData>({
+      url: "get-nearest-stations",
+      data,
+    }).then((res) => resolve(res.data));
+  });
+};
 
 export default function NearbyStationInfoList() {
   const [position, setPosition] = useState<GeolocationCoordinates | null>(null);

@@ -1,9 +1,10 @@
 "use server";
 
-import DSATInstance from "../instance";
-import { RouteData } from "../bus-route/[id]/types/route-info";
-import { supabase } from "../instances/supabase";
-import getRequestToken from "../utils/getRequestToken";
+import { RouteData } from "@/app/bus-route/[id]/types/route-info";
+import { DSATInstance } from "@/app/instances/axios";
+import { supabase } from "@/app/instances/supabase";
+import getRequestToken from "@/app/utils/getRequestToken";
+import { NextRequest, NextResponse } from "next/server";
 
 async function updateDatabase(
   routeList: any,
@@ -51,13 +52,24 @@ async function updateDatabase(
   }
 }
 
-export async function getRouteData({
-  routeName,
-  dir,
-}: {
-  routeName: string;
-  dir: string;
-}) {
+const requiredKeys = ["routeName", "dir"];
+
+export async function POST(request: NextRequest) {
+  const params = await request.json();
+  if (typeof params !== "object")
+    return NextResponse.json({ error: "Bad Request" }, { status: 400 });
+
+  for (let k of requiredKeys) {
+    if (params?.[k] == null)
+      return NextResponse.json({ error: `Missing ${k}` }, { status: 400 });
+  }
+  const {
+    routeName,
+    dir,
+  }: {
+    routeName: string;
+    dir: string;
+  } = params;
   const data = {
     action: "sd",
     routeName,
@@ -81,19 +93,21 @@ export async function getRouteData({
   ]);
 
   if (!result.data || !routeList.data?.data?.routeList)
-    return { data: { error: "No data." } } as RouteData;
+    return NextResponse.json({ data: { error: "No data." } } as RouteData);
 
   const routeType = routeList.data.data.routeList?.filter(
     (route: any) => route.routeName === routeName,
   )?.[0]?.direction;
 
-  if (!routeType) return { data: { error: "No data." } } as RouteData;
+  if (!routeType)
+    return NextResponse.json({ data: { error: "No data." } } as RouteData);
 
   let returnData = result.data;
-  if (!returnData.data) return { data: { error: "No data." } } as RouteData;
+  if (!returnData.data)
+    return NextResponse.json({ data: { error: "No data." } } as RouteData);
   returnData.data.routeType = routeType;
 
   // updateDatabase(routeList, result.data, routeName, dir);
 
-  return returnData;
+  return NextResponse.json(returnData);
 }

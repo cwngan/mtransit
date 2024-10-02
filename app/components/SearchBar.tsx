@@ -1,10 +1,19 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { RouteListData } from "../types/route-list";
-import search from "../actions/search";
 import { useRouter } from "next/navigation";
 import LoadingPlaceholder from "./LoadingPlaceholder";
 import clsx from "clsx";
 import RouteBlock from "./RouteBlock";
+import { APIInstance } from "../instances/axios";
+
+const search = async (data: { query: string }) => {
+  return new Promise<any>((resolve, reject) => {
+    APIInstance.request({
+      url: "search",
+      data,
+    }).then((res) => resolve(res.data));
+  });
+};
 
 export default function SearchBar() {
   const router = useRouter();

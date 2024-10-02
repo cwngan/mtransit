@@ -1,8 +1,18 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { getStationInfo, StationInfoData } from "../actions/get-station-info";
 import LoadingPlaceholder from "./LoadingPlaceholder";
 import RouteBlock from "./RouteBlock";
 import CurrentTabContext from "../store/CurrentTabContext";
+import { APIInstance } from "../instances/axios";
+import { StationInfoData } from "../types/data";
+
+const getStationInfo = async (data: { staCode: string }) => {
+  return new Promise<StationInfoData>((resolve, reject) => {
+    APIInstance.request({
+      url: "get-station-info",
+      data,
+    }).then((res) => resolve(res.data));
+  });
+};
 
 interface StationInfoBlock {
   staCode: string;

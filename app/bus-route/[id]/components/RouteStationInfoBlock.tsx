@@ -3,8 +3,22 @@ import RouteInfoContext from "../store/RouteInfoContext";
 import { RouteStationInfo } from "../types/route-station-info";
 import { faWheelchair } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getRouteStationInfo } from "@/app/actions/get-route-station-info";
 import LoadingPlaceholder from "@/app/components/LoadingPlaceholder";
+import { APIInstance } from "@/app/instances/axios";
+
+const getRouteStationInfo = async (data: {
+  routeCode: string;
+  routeName: string;
+  dir: string;
+  staIndex: number;
+}) => {
+  return new Promise<RouteStationInfo>((resolve, reject) => {
+    APIInstance.request<RouteStationInfo>({
+      url: "get-route-station-info",
+      data,
+    }).then((res) => resolve(res.data));
+  });
+};
 
 interface RouteStationInfoProps {
   staIndex: number;
