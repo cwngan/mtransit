@@ -162,7 +162,7 @@ export type Database = {
           routes: string[] | null;
         };
       };
-      find_nearest_station: {
+      find_stations_nearby: {
         Args: {
           target_lat: number;
           target_lon: number;

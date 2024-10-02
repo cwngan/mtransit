@@ -32,7 +32,7 @@ export default function StationInfoBlock({
   useEffect(() => {
     if (currentTab !== 0) return;
     updateData();
-    const n = window.setInterval(updateData, 10000);
+    const n = window.setInterval(updateData, 15000);
     return () => {
       window.clearInterval(n);
     };

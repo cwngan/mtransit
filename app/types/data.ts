@@ -1,9 +1,9 @@
 import { Database, Json } from "@/database.types";
 
-export interface NearestStationsData {
+export interface StationsNearbyData {
   error?: string;
   data?:
-    | Database["public"]["Functions"]["find_nearest_station"]["Returns"]
+    | Database["public"]["Functions"]["find_stations_nearby"]["Returns"]
     | null;
   status: number;
 }

@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     };
   } = params;
   const res = await supabase
-    .rpc("find_nearest_station", {
+    .rpc("find_stations_nearby", {
       target_lat: position.latitude,
       target_lon: position.longitude,
     })
