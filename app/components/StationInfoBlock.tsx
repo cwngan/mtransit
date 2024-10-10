@@ -4,6 +4,7 @@ import RouteBlock from "./RouteBlock";
 import CurrentTabContext from "../store/CurrentTabContext";
 import { APIInstance } from "../instances/axios";
 import { StationInfoData } from "../types/data";
+import { StarIcon as SolidStarIcon } from "@heroicons/react/20/solid";
 
 const getStationInfo = async (data: { staCode: string }) => {
   return new Promise<StationInfoData>((resolve, reject) => {
@@ -18,11 +19,13 @@ interface StationInfoBlock {
   staCode: string;
   fromTab: number;
   staName?: string;
+  unsetFavorite?: (code: string) => void;
 }
 export default function StationInfoBlock({
   staCode,
   fromTab,
   staName,
+  unsetFavorite,
 }: StationInfoBlock) {
   const [stationInfo, setStationInfo] = useState<StationInfoData | null>(null);
   const currentTab = useContext(CurrentTabContext);
@@ -38,7 +41,7 @@ export default function StationInfoBlock({
     return () => {
       window.clearInterval(n);
     };
-  }, [updateData, currentTab]);
+  }, [updateData, currentTab, fromTab]);
   return (
     <div className="flex flex-col gap-3 rounded-lg bg-white p-4">
       <div className="flex items-end gap-2">
@@ -50,6 +53,14 @@ export default function StationInfoBlock({
         <div className="rounded bg-gray-200 p-1 text-xs leading-none text-gray-600">
           {staCode}
         </div>
+        {unsetFavorite && (
+          <SolidStarIcon
+            className="ml-auto h-6 text-yellow-500"
+            onClick={() => {
+              unsetFavorite(staCode);
+            }}
+          />
+        )}
       </div>
       {stationInfo ? (
         <div className="flex flex-col gap-2">

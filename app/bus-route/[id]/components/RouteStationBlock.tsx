@@ -74,7 +74,7 @@ export default function RouteStationBlock({
             {staCode}
           </div>
           <div>{staName}</div>
-          {isOpen && (
+          {(isFavorite || isOpen) && (
             <div
               className="-my-2 ml-auto pr-2"
               onClick={(e) => {

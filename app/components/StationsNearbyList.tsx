@@ -38,6 +38,7 @@ export default function StationsNearbyList() {
       );
     }
   }, []);
+
   useEffect(() => {
     if (!position?.latitude || !position?.longitude) return;
     setPending(true);

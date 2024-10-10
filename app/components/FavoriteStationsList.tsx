@@ -6,13 +6,22 @@ export default function FavoriteStationsList() {
     null,
   );
 
+  const unsetFavorite = useCallback((code: string) => {
+    setFavoriteStations((prev) => {
+      if (prev === null) return null;
+      const idx = prev.findIndex((s) => s == code);
+      if (idx === -1) return prev;
+      prev.splice(idx);
+      return [...prev];
+    });
+  }, []);
+
   useEffect(() => {
     if (!window?.localStorage) return;
     const dataString: string | null =
       window.localStorage.getItem("favoriteStations");
     if (dataString !== null) {
       const data = JSON.parse(dataString);
-      console.log(data);
       setFavoriteStations(data);
     } else {
       setFavoriteStations([]);
@@ -20,7 +29,7 @@ export default function FavoriteStationsList() {
   }, []);
 
   useEffect(() => {
-    if (!favoriteStations) return;
+    if (favoriteStations === null) return;
     window.localStorage.setItem(
       "favoriteStations",
       JSON.stringify(favoriteStations),
@@ -34,7 +43,12 @@ export default function FavoriteStationsList() {
           {favoriteStations.length > 0 ? (
             favoriteStations.map((station) => {
               return (
-                <StationInfoBlock staCode={station} key={station} fromTab={1} />
+                <StationInfoBlock
+                  staCode={station}
+                  key={station}
+                  fromTab={1}
+                  unsetFavorite={unsetFavorite}
+                />
               );
             })
           ) : (
