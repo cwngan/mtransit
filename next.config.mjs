@@ -3,7 +3,7 @@
 import withPWA from 'next-pwa';
 
 const nextConfig = {
-  // output: "standalone",
+  output: "standalone",
   swcMinify: true,            // Enable SWC minification for improved performance
   compiler: {
       removeConsole: process.env.NODE_ENV !== "development"     // Remove console.log in production
