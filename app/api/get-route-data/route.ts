@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 async function updateDatabase(
   routeList: any,
   routeData: RouteData,
+  detailedInfo: any,
   routeName: string,
   dir: string,
 ) {
@@ -51,6 +52,80 @@ async function updateDatabase(
       .eq("key", `${routeName}_${dir}`);
     // console.log(res)
   }
+
+  if (detailedInfo.header.status === "000") {
+    const data = detailedInfo.data[0];
+    await Promise.all(
+      data.routeinfo.map((station: any) => {
+        return supabase
+          ?.from("stations")
+          .update({
+            dsat_id: station.stacode,
+            dsat_label: station.stalabel,
+            image_url: station.stationurl,
+          })
+          .eq("code", station.stationcode);
+      }),
+    );
+    for (let sta of data.routeinfo) {
+      supabase
+        .from("stations")
+        .select()
+        .eq("code", sta.stationcode)
+        .then((value) => {
+          if (!supabase) return;
+          if (value.data?.length === 0) {
+            supabase
+              .from("stations")
+              .upsert(
+                [
+                  {
+                    code: sta.stationcode,
+                    name_zh: sta.staname,
+                    lat: parseFloat(sta.lat),
+                    lon: parseFloat(sta.log),
+                    lane_name: sta.laneName ? sta.laneName : null,
+                    routes: [`${routeName}_${dir}`],
+                  },
+                ],
+                { onConflict: "code" },
+              )
+              .then(() => {
+                // console.log("Insert success");
+              });
+          } else {
+            // console.log(`Updating ${sta.stationName}`);
+            supabase
+              .rpc("append_routes", {
+                station_id: sta.stationcode,
+                route_name: `${routeName}_${dir}`,
+              })
+              .then((value) => {});
+          }
+        });
+    }
+    const current_stations = await supabase
+      .from("stations")
+      .select("*")
+      .contains("routes", [`${routeName}_${dir}`]);
+    if (!current_stations.data) return;
+    // console.log(current_stations.data);
+    const extra = current_stations.data.filter(
+      ({ code }) =>
+        data.routeinfo.filter((sta: any) => sta.stationcode === code).length ===
+        0,
+    );
+    let promises = [];
+    for (let sta of extra) {
+      if (!sta.routes) continue;
+      sta.routes = sta.routes.filter(
+        (route) => route !== `${routeName}_${dir}`,
+      );
+      promises.push(supabase.from("stations").update(sta).eq("id", sta.id));
+    }
+    await Promise.all(promises);
+    // console.log(extra);
+  }
 }
 
 const requiredKeys = ["routeName", "dir"];
@@ -71,18 +146,18 @@ export async function POST(request: NextRequest) {
     routeName: string;
     dir: string;
   } = params;
-  const data = {
+  const data1 = {
     action: "sd",
     routeName,
     dir,
     lang: "zh_tw",
   };
-  const [result, routeList] = await Promise.all([
+  const [routeData, routeList] = await Promise.all([
     DSATInstance.request<RouteData>({
       url: "macauweb/getRouteData.html",
-      data: new URLSearchParams(data),
+      data: new URLSearchParams(data1),
       headers: {
-        token: getRequestToken("macauweb/getRouteData.html", data),
+        token: getRequestToken("macauweb/getRouteData.html", data1),
       },
     }),
     DSATInstance.request({
@@ -93,7 +168,7 @@ export async function POST(request: NextRequest) {
     }),
   ]);
 
-  if (!result.data || !routeList.data?.data?.routeList)
+  if (!routeData.data || !routeList.data?.data?.routeList)
     return NextResponse.json({ data: { error: "No data." } } as RouteData);
 
   const routeType = routeList.data.data.routeList?.filter(
@@ -103,12 +178,35 @@ export async function POST(request: NextRequest) {
   if (!routeType)
     return NextResponse.json({ data: { error: "No data." } } as RouteData);
 
-  let returnData = result.data;
+  let returnData = routeData.data;
   if (!returnData.data)
     return NextResponse.json({ data: { error: "No data." } } as RouteData);
   returnData.data.routeType = routeType;
 
-  // updateDatabase(routeList, result.data, routeName, dir);
+  // const data2 = {
+  //   routecode: returnData.data.routeCode,
+  //   dir,
+  //   device: "web",
+  //   lang: "zh_tw",
+  //   BypassToken: "HuatuTesting0307",
+  //   HUID: crypto.randomUUID(),
+  // };
+
+  // DSATInstance.request<RouteData>({
+  //   url: "ddbus/app/routestation/station",
+  //   data: new URLSearchParams(data2),
+  //   headers: {
+  //     token: getRequestToken("ddbus/app/routestation/station", data2),
+  //   },
+  // }).then((detailedInfo) => {
+  //   updateDatabase(
+  //     routeList,
+  //     routeData.data,
+  //     detailedInfo.data,
+  //     routeName,
+  //     dir,
+  //   );
+  // });
 
   return NextResponse.json(returnData);
 }

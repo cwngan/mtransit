@@ -89,6 +89,6 @@ export async function POST(request: NextRequest) {
   });
   // console.log(result.headers);
   // console.log(result.data);
-  // updateDatabase(result.data, routeName, dir);
+  updateDatabase(result.data, routeName, dir);
   return NextResponse.json(result.data);
 }

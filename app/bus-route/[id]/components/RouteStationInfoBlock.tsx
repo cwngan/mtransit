@@ -51,7 +51,7 @@ export default function RouteStationInfoBlock({
           .catch(() => {
             setError(true);
           });
-      }, 2500);
+      }, 5000);
     } else {
       if (interval.current !== null) window.clearInterval(interval.current);
     }

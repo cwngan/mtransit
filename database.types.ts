@@ -104,7 +104,10 @@ export type Database = {
         Row: {
           code: string;
           created_at: string;
+          dsat_id: string | null;
+          dsat_label: string | null;
           id: string;
+          image_url: string | null;
           lane_name: string | null;
           lat: number | null;
           lon: number | null;
@@ -116,7 +119,10 @@ export type Database = {
         Insert: {
           code: string;
           created_at?: string;
+          dsat_id?: string | null;
+          dsat_label?: string | null;
           id?: string;
+          image_url?: string | null;
           lane_name?: string | null;
           lat?: number | null;
           lon?: number | null;
@@ -128,7 +134,10 @@ export type Database = {
         Update: {
           code?: string;
           created_at?: string;
+          dsat_id?: string | null;
+          dsat_label?: string | null;
           id?: string;
+          image_url?: string | null;
           lane_name?: string | null;
           lat?: number | null;
           lon?: number | null;
@@ -152,7 +161,10 @@ export type Database = {
         Returns: {
           code: string;
           created_at: string;
+          dsat_id: string | null;
+          dsat_label: string | null;
           id: string;
+          image_url: string | null;
           lane_name: string | null;
           lat: number | null;
           lon: number | null;
@@ -286,4 +298,19 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never;
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database;
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never;
