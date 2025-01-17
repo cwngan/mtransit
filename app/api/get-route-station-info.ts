@@ -16,17 +16,17 @@ export default async function getRouteStationInfo(params: {
   let { routeCode, routeName, dir, staIndex, staCode, limit = 3 } = params;
   if (!routeCode) {
     let tmp = await getRouteData({ routeName, dir });
-    if (!tmp.data?.routeCode) return [];
+    if (!tmp.data?.routeCode) return { buses: [] };
     routeCode = tmp.data.routeCode;
   }
-  if (!routeCode) return [];
+  if (!routeCode) return { buses: [] };
   const [busData, locationData, geoTrafficData] = await Promise.all([
     getBus({ routeName, dir }),
     getLocation({ routeName, dir, routeCode }),
     getTrafficWithRoute({ routeCode, dir }),
   ]);
 
-  if (Object.keys(busData.data as any).length === 0) return null;
+  if (Object.keys(busData.data as any).length === 0) return { buses: null };
 
   let buses: (BusInfo & {
     staIndex: number;
@@ -43,7 +43,7 @@ export default async function getRouteStationInfo(params: {
     staIndex = busData.data.routeInfo.findIndex(
       (sta) => sta.staCode === staCode,
     );
-    if (staIndex === -1) return [];
+    if (staIndex === -1) return { buses: [] };
   }
 
   for (let i = staIndex; i >= 0; i--) {
@@ -101,5 +101,5 @@ export default async function getRouteStationInfo(params: {
     }
     buses[i].distance = distance;
   }
-  return buses;
+  return { buses, staIndex };
 }

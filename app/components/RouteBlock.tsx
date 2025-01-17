@@ -9,13 +9,16 @@ export default function RouteBlock({
   origin,
   destination,
   mode = "from",
-}: RouteListData & { mode?: "to" | "from" }) {
+  staIndex,
+}: RouteListData & { mode?: "to" | "from"; staIndex?: number }) {
   const router = useRouter();
   return (
     <div
       className="flex cursor-pointer items-center overflow-hidden rounded-lg leading-none"
       onClick={() => {
-        router.push(`/bus-route/${name}?dir=${direction}`);
+        router.push(
+          `/bus-route/${name}?dir=${direction}${staIndex !== undefined ? `&idx=${staIndex}` : ""}`,
+        );
       }}
     >
       <div

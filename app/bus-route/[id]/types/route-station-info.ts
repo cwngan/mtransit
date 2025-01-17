@@ -1,4 +1,4 @@
-export type RouteStationInfo = BusInfo[];
+export type RouteStationInfo = { buses: BusInfo[]; staIndex?: number };
 export interface BusInfo {
   busPlate: string;
   busCode: string;

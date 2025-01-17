@@ -23,6 +23,7 @@ export interface StationInfoData {
           destination: Json | null;
           direction: string;
           code: string | null;
+          staIndex?: number;
           busInfo: {
             distance: number;
             staIndex: number;

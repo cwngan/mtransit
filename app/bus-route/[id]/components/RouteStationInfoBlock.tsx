@@ -33,9 +33,17 @@ export default function RouteStationInfoBlock({
   const [data, setData] = useState<RouteStationInfo | null>(null);
   const [error, setError] = useState<boolean>(false);
   const interval = useRef<number | null>(null);
+  const container = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!routeCode || !routeName || !dir) return;
     if (isOpen) {
+      if (container.current) {
+        container.current.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+        // console.log("hi");
+      }
       getRouteStationInfo({ routeCode, routeName, dir, staIndex })
         .then((res) => {
           setData(res);
@@ -60,9 +68,9 @@ export default function RouteStationInfoBlock({
     };
   }, [isOpen, routeCode, routeName, dir, staIndex]);
   return (
-    <div className="flex flex-col gap-2 pb-4 pl-2 pr-4">
-      {data && data.length > 0 ? (
-        data.map((bus) => {
+    <div className="flex flex-col gap-2 pb-4 pl-2 pr-4" ref={container}>
+      {data?.buses && data.buses.length > 0 ? (
+        data.buses.map((bus) => {
           return (
             <div key={bus.busPlate} className="flex items-end gap-1">
               {bus.busType !== "" && (
@@ -113,31 +121,33 @@ export default function RouteStationInfoBlock({
                   </>
                 ) : null}
               </div>
-              {bus.traffic !== "-1" ? (
-                bus.traffic === "1" ? (
-                  <div className="ml-auto flex items-end rounded bg-green-300 p-1 text-sm leading-none">
-                    行車暢順
+              <div className="ml-auto flex gap-1">
+                {bus.traffic !== "-1" ? (
+                  bus.traffic === "1" ? (
+                    <div className="flex items-end rounded bg-green-300 p-1 text-sm leading-none">
+                      行車暢順
+                    </div>
+                  ) : bus.traffic === "2" ? (
+                    <div className="flex items-end rounded bg-yellow-300 p-1 text-sm leading-none">
+                      行車緩慢
+                    </div>
+                  ) : (
+                    <div className="flex items-end rounded bg-red-300 p-1 text-sm leading-none">
+                      行程受阻
+                    </div>
+                  )
+                ) : null}
+                {bus.speed != "" ? (
+                  <div className="mb-1 flex items-end text-gray-500">
+                    <span className="text-sm leading-none">{bus.speed}</span>
+                    <span className="text-xs leading-none">km/h</span>
                   </div>
-                ) : bus.traffic === "2" ? (
-                  <div className="ml-auto flex items-end rounded bg-yellow-300 p-1 text-sm leading-none">
-                    行車緩慢
-                  </div>
-                ) : (
-                  <div className="ml-auto flex items-end rounded bg-red-300 p-1 text-sm leading-none">
-                    行程受阻
-                  </div>
-                )
-              ) : null}
-              {bus.speed != "" ? (
-                <div className="mb-1 flex items-end text-gray-500">
-                  <span className="text-sm leading-none">{bus.speed}</span>
-                  <span className="text-xs leading-none">km/h</span>
-                </div>
-              ) : null}
+                ) : null}
+              </div>
             </div>
           );
         })
-      ) : data && data.length == 0 ? (
+      ) : data?.buses && data.buses.length == 0 ? (
         <div className="text-xl">未出發</div>
       ) : error ? (
         <div>Error</div>

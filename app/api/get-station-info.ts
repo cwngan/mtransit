@@ -51,16 +51,6 @@ export default async function getStationInfo(params: { staCode: string }) {
         .in("key", routeKeys)
         .select("*")
     ).data || [];
-  // const routes = await Promise.all(
-  //   routeKeys.map(async (key) => {
-  //     if (!supabase) return;
-  //     const r = await supabase
-  //       .rpc("get_all_routes_with_origin_and_destination")
-  //       .eq("key", key)
-  //       .select("*");
-  //     return r.data?.[0];
-  //   }),
-  // );
   const data = await Promise.all(
     routes.map(async (route) => {
       if (!route?.name || route.direction === null || !route.code) return;
@@ -70,7 +60,7 @@ export default async function getStationInfo(params: { staCode: string }) {
         dir: `${route.direction}`,
         staCode,
       });
-      if (!res) return;
+      if (!res.buses) return;
       return {
         name: route.name,
         type: route.type,
@@ -82,7 +72,8 @@ export default async function getStationInfo(params: { staCode: string }) {
         direction: route.direction,
         key: route.key,
         code: route.code,
-        busInfo: res.map((bus) => {
+        staIndex: res.staIndex,
+        busInfo: res.buses.map((bus) => {
           return {
             distance: bus.distance,
             staIndex: bus.staIndex,

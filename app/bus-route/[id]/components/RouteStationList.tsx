@@ -2,11 +2,19 @@ import { RouteDataWithBus } from "@/app/types/bus-route";
 import { BusInfo } from "../types/bus";
 import { StationInfo } from "../types/route-info";
 import RouteStationBlock from "./RouteStationBlock";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LoadingPlaceholder from "@/app/components/LoadingPlaceholder";
+import { useSearchParams } from "next/navigation";
 
 export default function RouteStationList({ data }: RouteDataWithBus) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const idx = searchParams.get("idx");
+    if (idx) {
+      setOpenIndex(parseInt(idx));
+    }
+  }, [searchParams]);
   return (
     <div>
       {data && data.routeInfo.length > 0 ? (
