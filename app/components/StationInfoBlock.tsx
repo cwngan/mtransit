@@ -28,6 +28,8 @@ export default function StationInfoBlock({
   unsetFavorite,
 }: StationInfoBlock) {
   const [stationInfo, setStationInfo] = useState<StationInfoData | null>(null);
+  const [showNotOperatingRoutes, setShowNotOperatingRoutes] =
+    useState<boolean>(false);
   const currentTab = useContext(CurrentTabContext);
   const updateData = useCallback(() => {
     getStationInfo({ staCode }).then((data) => {
@@ -64,27 +66,36 @@ export default function StationInfoBlock({
       </div>
       {stationInfo ? (
         <div className="flex flex-col gap-2">
-          {stationInfo.data
-            ? stationInfo.data.routes.map((route) => {
-                if (!route || !route.code) return;
+          {stationInfo.data ? (
+            <>
+              {stationInfo.data.routes.map((route) => {
+                if (
+                  !route ||
+                  !route.code ||
+                  (!showNotOperatingRoutes && !route.busInfo.operating)
+                )
+                  return;
                 const { key, ...rest } = route;
                 return (
                   <div key={key} className="flex items-center justify-between">
                     {/** @ts-ignore */}
                     <RouteBlock {...rest} mode="to" />
-                    {route.busInfo[0] ? (
-                      <div className="flex gap-1 text-sm">
-                        <div className="ml-2 flex items-end font-mono leading-none">
-                          <div className="text-lg leading-none">
-                            {route.busInfo[0].staRemaining === 0
-                              ? "到站"
-                              : route.busInfo[0].staRemaining}
+                    {route.busInfo.operating ? (
+                      route.busInfo.staRemaining >= 999 ? (
+                        <div className="text-lg">未出發</div>
+                      ) : (
+                        <div className="flex gap-1 text-sm">
+                          <div className="ml-2 flex items-end font-mono leading-none">
+                            <div className="text-lg leading-none">
+                              {route.busInfo.staRemaining === 0
+                                ? "到站"
+                                : route.busInfo.staRemaining}
+                            </div>
+                            {route.busInfo.staRemaining !== 0 ? (
+                              <div>站</div>
+                            ) : null}
                           </div>
-                          {route.busInfo[0].staRemaining !== 0 ? (
-                            <div>站</div>
-                          ) : null}
-                        </div>
-                        <div className="flex items-end font-mono leading-none">
+                          {/* <div className="flex items-end font-mono leading-none">
                           {route.busInfo[0].distance > 0.95 ? (
                             <>
                               <span className="text-lg leading-none">
@@ -106,15 +117,29 @@ export default function StationInfoBlock({
                               <span>m</span>
                             </>
                           ) : null}
+                        </div> */}
                         </div>
-                      </div>
+                      )
                     ) : (
-                      <div className="text-lg">未出發</div>
+                      <div className="text-sm text-gray-500">非營運時間</div>
                     )}
                   </div>
                 );
-              })
-            : null}
+              })}
+              {stationInfo.data.routes.filter((r) => r && !r.busInfo.operating)
+                .length > 0 &&
+                !showNotOperatingRoutes && (
+                  <div className="flex w-full justify-center">
+                    <div
+                      className="cursor-pointer text-sm text-gray-500 underline underline-offset-2"
+                      onClick={() => setShowNotOperatingRoutes(true)}
+                    >
+                      顯示非營運時間路線
+                    </div>
+                  </div>
+                )}
+            </>
+          ) : null}
         </div>
       ) : null}
     </div>
