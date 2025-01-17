@@ -1,6 +1,5 @@
-import { DSATInstance } from "@/app/instances/axios";
-import getRequestToken from "@/app/utils/getRequestToken";
 import { NextRequest, NextResponse } from "next/server";
+import { getBus } from "../get-bus";
 
 const requiredKeys = ["routeName", "dir"];
 
@@ -14,18 +13,5 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: `Missing ${k}` }, { status: 400 });
   }
 
-  const data = {
-    action: "dy",
-    routeName: params["routeName"],
-    dir: params["dir"],
-    lang: "zh_tw",
-  };
-  const result = await DSATInstance.request({
-    url: "macauweb/routestation/bus",
-    data: new URLSearchParams(data),
-    headers: {
-      token: getRequestToken("macauweb/routestation/bus", data),
-    },
-  });
-  return NextResponse.json(result.data);
+  return NextResponse.json(await getBus(params));
 }
