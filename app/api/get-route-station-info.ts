@@ -101,5 +101,8 @@ export default async function getRouteStationInfo(params: {
     }
     buses[i].distance = distance;
   }
+  buses.sort(
+    (a, b) => a.staRemaining - b.staRemaining || a.distance - b.distance,
+  );
   return { buses, staIndex };
 }
