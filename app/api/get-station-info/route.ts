@@ -61,16 +61,23 @@ export async function POST(request: NextRequest) {
   const routeKeys = res.data?.[0]?.routes;
   if (!routeKeys || routeKeys.length === 0)
     return NextResponse.json({ error: "no data.", status: 500 });
-  const routes = await Promise.all(
-    routeKeys.map(async (key) => {
-      if (!supabase) return;
-      const r = await supabase
+  const routes =
+    (
+      await supabase
         .rpc("get_all_routes_with_origin_and_destination")
-        .eq("key", key)
-        .select("*");
-      return r.data?.[0];
-    }),
-  );
+        .in("key", routeKeys)
+        .select("*")
+    ).data || [];
+  // const routes = await Promise.all(
+  //   routeKeys.map(async (key) => {
+  //     if (!supabase) return;
+  //     const r = await supabase
+  //       .rpc("get_all_routes_with_origin_and_destination")
+  //       .eq("key", key)
+  //       .select("*");
+  //     return r.data?.[0];
+  //   }),
+  // );
   const data = await Promise.all(
     routes.map(async (route) => {
       if (!route?.name || route.direction === null || !route.code) return;
