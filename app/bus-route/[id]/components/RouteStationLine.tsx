@@ -40,7 +40,7 @@ export default function StationLine({
     <div className="col-span-1 flex justify-center">
       <div className={roadClasses}>
         {busInfo.filter((bus) => bus.status === "0").length > 0 ? (
-          <div className={`${busIconClasses} top-4 animate-pulse`}>
+          <div className={`${busIconClasses} bottom-4 animate-pulse`}>
             <FontAwesomeIcon icon={faBus} size="xs" inverse />
           </div>
         ) : null}
