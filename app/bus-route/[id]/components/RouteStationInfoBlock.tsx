@@ -113,32 +113,32 @@ export default function RouteStationInfoBlock({
                   </>
                 ) : null}
               </div>
-              {bus.speed != "" ? (
-                <div className="mb-1 ml-auto flex items-end text-gray-500">
-                  <span className="text-sm leading-none">{bus.speed}</span>
-                  <span className="text-xs leading-none">km/h</span>
-                </div>
-              ) : null}
               {bus.traffic !== "-1" ? (
                 bus.traffic === "1" ? (
-                  <div className="flex items-end rounded bg-green-300 p-1 text-sm leading-none">
+                  <div className="ml-auto flex items-end rounded bg-green-300 p-1 text-sm leading-none">
                     行車暢順
                   </div>
                 ) : bus.traffic === "2" ? (
-                  <div className="flex items-end rounded bg-yellow-300 p-1 text-sm leading-none">
+                  <div className="ml-auto flex items-end rounded bg-yellow-300 p-1 text-sm leading-none">
                     行車緩慢
                   </div>
                 ) : (
-                  <div className="flex items-end rounded bg-red-300 p-1 text-sm leading-none">
+                  <div className="ml-auto flex items-end rounded bg-red-300 p-1 text-sm leading-none">
                     行程受阻
                   </div>
                 )
+              ) : null}
+              {bus.speed != "" ? (
+                <div className="mb-1 flex items-end text-gray-500">
+                  <span className="text-sm leading-none">{bus.speed}</span>
+                  <span className="text-xs leading-none">km/h</span>
+                </div>
               ) : null}
             </div>
           );
         })
       ) : data && data.length == 0 ? (
-        <div className="text-xl">未發車</div>
+        <div className="text-xl">未出發</div>
       ) : error ? (
         <div>Error</div>
       ) : (

@@ -109,7 +109,7 @@ export default function StationInfoBlock({
                         </div>
                       </div>
                     ) : (
-                      <div className="text-lg">未發車</div>
+                      <div className="text-lg">未出發</div>
                     )}
                   </div>
                 );
