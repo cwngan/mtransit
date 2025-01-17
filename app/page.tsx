@@ -1,44 +1,45 @@
 "use client";
 import SearchBar from "./components/SearchBar";
 import clsx from "clsx";
-import { useState } from "react";
 import CurrentTabContext from "./store/CurrentTabContext";
 import StationsNearbyList from "./components/StationsNearbyList";
 import FavoriteStationsList from "./components/FavoriteStationsList";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 export default function Page() {
-  const [currentTab, setCurrentTab] = useState<number>(1);
+  const searchParams = useSearchParams();
+  const currentTab = parseInt(searchParams.get("tab") || "1");
+
   return (
     <CurrentTabContext.Provider value={currentTab}>
       <div className="container mx-auto flex h-full max-h-full flex-col">
         <SearchBar />
         <div className={clsx("grid w-full grid-cols-2")}>
-          <div
-            className={clsx(
-              "rounded-t-xl p-4 pb-2 text-center leading-none",
-              currentTab === 0
-                ? "bg-cyan-600 text-white"
-                : "bg-white text-black",
-            )}
-            onClick={() => {
-              setCurrentTab(0);
-            }}
-          >
-            附近站點
-          </div>
-          <div
-            className={clsx(
-              "rounded-t-xl p-4 pb-2 text-center leading-none",
-              currentTab === 1
-                ? "bg-orange-600 text-white"
-                : "bg-white text-black",
-            )}
-            onClick={() => {
-              setCurrentTab(1);
-            }}
-          >
-            收藏站點
-          </div>
+          <Link href={"/?tab=0"}>
+            <div
+              className={clsx(
+                "rounded-t-xl p-4 pb-2 text-center leading-none",
+                currentTab === 0
+                  ? "bg-cyan-600 text-white"
+                  : "bg-white text-black",
+              )}
+            >
+              附近站點
+            </div>
+          </Link>
+          <Link href={"/?tab=1"}>
+            <div
+              className={clsx(
+                "rounded-t-xl p-4 pb-2 text-center leading-none",
+                currentTab === 1
+                  ? "bg-orange-600 text-white"
+                  : "bg-white text-black",
+              )}
+            >
+              收藏站點
+            </div>
+          </Link>
         </div>
         <div className="flex-grow">
           <div

@@ -29,7 +29,8 @@ const Header = forwardRef<HTMLDivElement, HeaderProps>(function Header(
       >
         <div
           onClick={() => {
-            router.push("/");
+            // router.push("/");
+            router.back();
           }}
           className="flex cursor-pointer justify-center"
         >
