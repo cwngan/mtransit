@@ -26,6 +26,8 @@ export default async function getRouteStationInfo(params: {
     getTrafficWithRoute({ routeCode, dir }),
   ]);
 
+  if (Object.keys(busData.data as any).length === 0) return null;
+
   let buses: (BusInfo & {
     staIndex: number;
     staCode: string;

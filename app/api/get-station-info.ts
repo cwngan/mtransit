@@ -70,6 +70,7 @@ export default async function getStationInfo(params: { staCode: string }) {
         dir: `${route.direction}`,
         staCode,
       });
+      if (!res) return;
       return {
         name: route.name,
         type: route.type,
