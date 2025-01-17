@@ -12,7 +12,7 @@ export default function Home() {
 
   return (
     <CurrentTabContext.Provider value={currentTab}>
-      <div className="container mx-auto flex h-full max-h-full flex-col">
+      <div className="container mx-auto flex h-full max-h-full max-w-screen-sm flex-col">
         <SearchBar />
         <div className={clsx("grid w-full grid-cols-2")}>
           <Link href={"/?tab=0"}>

@@ -20,7 +20,7 @@ const Header = forwardRef<HTMLDivElement, HeaderProps>(function Header(
   const router = useRouter();
   const routeInfo = useContext(RouteInfoContext);
   return (
-    <div className="fixed z-50 w-full" ref={ref}>
+    <div className="fixed z-50 w-full max-w-screen-sm" ref={ref}>
       <div
         className={clsx(
           `${routeInfo?.busColor === "Orange" ? "bg-tcm-orange" : routeInfo?.busColor === "Blue" ? "bg-transmac-yellow" : ""}`,

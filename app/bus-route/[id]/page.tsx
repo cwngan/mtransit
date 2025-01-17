@@ -145,15 +145,19 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
 
   return (
     <RouteInfoContext.Provider value={routeInfo}>
-      <Header
-        routeName={id}
-        from={routeData?.data?.routeInfo[0].staName}
-        to={routeData?.data?.routeInfo.findLast(() => true)?.staName}
-        dir={dir}
-        ref={headerRef}
-      />
-      <div style={{ paddingTop: `${headerRef.current?.clientHeight || 80}px` }}>
-        <RouteStationList {...currentRouteData} />
+      <div className="container mx-auto max-w-screen-sm">
+        <Header
+          routeName={id}
+          from={routeData?.data?.routeInfo[0].staName}
+          to={routeData?.data?.routeInfo.findLast(() => true)?.staName}
+          dir={dir}
+          ref={headerRef}
+        />
+        <div
+          style={{ paddingTop: `${headerRef.current?.clientHeight || 80}px` }}
+        >
+          <RouteStationList {...currentRouteData} />
+        </div>
       </div>
     </RouteInfoContext.Provider>
   );
