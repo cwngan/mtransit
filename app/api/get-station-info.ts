@@ -76,7 +76,7 @@ export default async function getStationInfo(params: { staCode: string }) {
         .in("key", routeKeys)
         .select("*")
     ).data || [];
-  const dsatRouteInfo = await DSATInstance.request<DSATStationInfo[]>({
+  const dsatStationInfo = await DSATInstance.request<DSATStationInfo[]>({
     method: "POST",
     url: "ddbus/dynamic/station/v2",
     data: new URLSearchParams({
@@ -85,23 +85,24 @@ export default async function getStationInfo(params: { staCode: string }) {
       BypassToken: "HuatuTesting0307", // some weird entry that has to be put in order to yield results
     }),
   }).then((res) => res.data);
-  const dsatRouteInfoObj: {
+  const dsatStationInfoObj: {
     [routeCode: string]: DSATStationInfoRouteDynamicinfo;
   } = {};
-  for (let route of dsatRouteInfo[0].data[0].routeDynamicinfo) {
-    dsatRouteInfoObj[route.routecode] = route;
+  for (let route of dsatStationInfo[0].data[0].routeDynamicinfo) {
+    dsatStationInfoObj[route.routecode] = route;
   }
   const data = await Promise.all(
     routes.map(async (route) => {
       if (!route?.name || route.direction === null || !route.code) return;
-      // const res = await getRouteStationInfo({
-      //   routeName: route.name,
-      //   routeCode: route.code,
-      //   dir: `${route.direction}`,
-      //   staCode,
-      // });
-      // if (!res.buses) return;
-      const dsatRoute = dsatRouteInfoObj[route.code];
+      const res = await getRouteStationInfo({
+        routeName: route.name,
+        routeCode: route.code,
+        dir: `${route.direction}`,
+        staCode,
+        limit: 1,
+      });
+      if (!res.buses) return;
+      const dsatRoute = dsatStationInfoObj[route.code];
       if (!dsatRoute) return;
       return {
         name: route.name,
@@ -114,37 +115,33 @@ export default async function getStationInfo(params: { staCode: string }) {
         direction: route.direction,
         key: route.key,
         code: route.code,
-        staIndex: parseInt(dsatRoute.stopxh) - 1,
+        staIndex: res.staIndex,
         busInfo: {
-          staRemaining:
-            dsatRoute.stopcounts === "n"
-              ? dsatRoute.nonOperation
-                ? 9999
-                : 999
-              : dsatRoute.stopcounts === "x"
-                ? 1
-                : parseInt(dsatRoute.stopcounts),
+          staRemaining: dsatRoute.nonOperation
+            ? 9999 // Not operating
+            : res.buses.length > 0
+              ? res.buses[0].staRemaining
+              : 999, // Operating but no bus
           operating: !dsatRoute.nonOperation,
+          distance:
+            res.buses.length > 0
+              ? res.buses[0].distance
+              : dsatRoute.nonOperation
+                ? 9999999 // Not operating
+                : 999999, // Operating but no bus
         },
-        // busInfo: res.buses.map((bus) => {
-        //   return {
-        //     distance: bus.distance,
-        //     staIndex: bus.staIndex,
-        //     staRemaining: bus.staRemaining,
-        //   };
-        // }),
       };
     }),
   );
   data.sort((a, b) => {
     if (!a || !b) return 0;
-    return a.busInfo.staRemaining === b.busInfo.staRemaining
+    return a.busInfo.distance === b.busInfo.distance
       ? a.code > b.code
         ? 1
         : a.code === b.code
           ? 0
           : -1
-      : a.busInfo.staRemaining - b.busInfo.staRemaining;
+      : a.busInfo.distance - b.busInfo.distance;
   });
   return {
     data: { routes: data, station: res.data?.[0] },

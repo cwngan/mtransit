@@ -25,7 +25,7 @@ export interface StationInfoData {
           code: string | null;
           staIndex?: number;
           busInfo: {
-            // distance: number;
+            distance: number;
             // staIndex: number;
             staRemaining: number;
             operating: boolean;

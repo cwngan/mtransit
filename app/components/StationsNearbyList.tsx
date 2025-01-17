@@ -99,6 +99,7 @@ export default function StationsNearbyList() {
                   staCode={station.code}
                   key={station.id}
                   fromTab={0}
+                  distance={station.distance}
                 />
               );
             })

@@ -45,12 +45,12 @@ export default function RouteBlock({
       >
         {mode === "from" ? (
           <>
-            <div className="mr-1 leading-none">{origin.sta_name}</div>
+            <div className="mr-[1.5px] leading-none">{origin.sta_name}</div>
             <div className="text-xs leading-none">開出</div>
           </>
         ) : (
           <>
-            <div className="mr-1 text-xs leading-none">往</div>
+            <div className="mr-[1.5px] text-xs leading-none">往</div>
             <div className="leading-none">{destination.sta_name}</div>
           </>
         )}

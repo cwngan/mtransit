@@ -124,15 +124,15 @@ export default function RouteStationInfoBlock({
               <div className="ml-auto flex gap-1">
                 {bus.traffic !== "-1" ? (
                   bus.traffic === "1" ? (
-                    <div className="flex items-end rounded bg-green-300 p-1 text-sm leading-none">
+                    <div className="flex items-end rounded bg-green-300 p-1 text-xs leading-none">
                       行車暢順
                     </div>
                   ) : bus.traffic === "2" ? (
-                    <div className="flex items-end rounded bg-yellow-300 p-1 text-sm leading-none">
+                    <div className="flex items-end rounded bg-yellow-300 p-1 text-xs leading-none">
                       行車緩慢
                     </div>
                   ) : (
-                    <div className="flex items-end rounded bg-red-300 p-1 text-sm leading-none">
+                    <div className="flex items-end rounded bg-red-300 p-1 text-xs leading-none">
                       行程受阻
                     </div>
                   )

@@ -4,7 +4,10 @@ import RouteBlock from "./RouteBlock";
 import CurrentTabContext from "../store/CurrentTabContext";
 import { APIInstance } from "../instances/axios";
 import { StationInfoData } from "../types/data";
-import { StarIcon as SolidStarIcon } from "@heroicons/react/20/solid";
+import {
+  ChevronDoubleRightIcon,
+  StarIcon as SolidStarIcon,
+} from "@heroicons/react/20/solid";
 
 const getStationInfo = async (data: { staCode: string }) => {
   return new Promise<StationInfoData>((resolve, reject) => {
@@ -19,12 +22,14 @@ interface StationInfoBlock {
   staCode: string;
   fromTab: number;
   staName?: string;
+  distance?: number;
   unsetFavorite?: (code: string) => void;
 }
 export default function StationInfoBlock({
   staCode,
   fromTab,
   staName,
+  distance,
   unsetFavorite,
 }: StationInfoBlock) {
   const [stationInfo, setStationInfo] = useState<StationInfoData | null>(null);
@@ -63,6 +68,22 @@ export default function StationInfoBlock({
             }}
           />
         )}
+        {distance !== undefined && (
+          <div className="ml-auto flex items-center text-xs text-gray-500">
+            <ChevronDoubleRightIcon className="h-4 w-4" />
+            {distance > 0.95 ? (
+              <>
+                <span>{Math.round(distance * 10) / 10}</span>
+                <span>km</span>
+              </>
+            ) : distance > 0 ? (
+              <>
+                <span>{Math.floor(distance * 200) * 5}</span>
+                <span>m</span>
+              </>
+            ) : null}
+          </div>
+        )}
       </div>
       {stationInfo ? (
         <div className="flex flex-col gap-2">
@@ -80,48 +101,49 @@ export default function StationInfoBlock({
                   <div key={key} className="flex items-center justify-between">
                     {/** @ts-ignore */}
                     <RouteBlock {...rest} mode="to" />
-                    {route.busInfo.operating ? (
-                      route.busInfo.staRemaining >= 999 ? (
+                    {route.busInfo.staRemaining >= 999 ? (
+                      route.busInfo.operating ? (
                         <div className="text-lg">未出發</div>
                       ) : (
-                        <div className="flex gap-1 text-sm">
-                          <div className="ml-2 flex items-end font-mono leading-none">
-                            <div className="text-lg leading-none">
-                              {route.busInfo.staRemaining === 0
-                                ? "到站"
-                                : route.busInfo.staRemaining}
-                            </div>
-                            {route.busInfo.staRemaining !== 0 ? (
-                              <div>站</div>
-                            ) : null}
+                        <div className="text-sm text-gray-500">非營運中</div>
+                      )
+                    ) : (
+                      <div className="flex gap-1 text-sm">
+                        <div className="mb-px ml-2 flex items-end font-mono leading-none">
+                          <div className="leading-none">
+                            {route.busInfo.staRemaining === 0 ? (
+                              <span className="text-lg">到站</span>
+                            ) : (
+                              route.busInfo.staRemaining
+                            )}
                           </div>
-                          {/* <div className="flex items-end font-mono leading-none">
-                          {route.busInfo[0].distance > 0.95 ? (
+                          {route.busInfo.staRemaining !== 0 ? (
+                            <div>站</div>
+                          ) : null}
+                        </div>
+                        <div className="flex items-end font-mono leading-none">
+                          {route.busInfo.distance > 0.95 ? (
                             <>
                               <span className="text-lg leading-none">
-                                {Math.round(route.busInfo[0].distance * 10) /
-                                  10}
+                                {Math.round(route.busInfo.distance * 10) / 10}
                               </span>
                               <span>km</span>
                             </>
-                          ) : route.busInfo[0].distance > 0 ? (
+                          ) : route.busInfo.distance > 0 ? (
                             <>
                               <span className="text-lg leading-none">
-                                {Math.ceil(route.busInfo[0].distance * 20) * 50}
+                                {Math.ceil(route.busInfo.distance * 20) * 50}
                               </span>
                               <span>m</span>
                             </>
-                          ) : route.busInfo[0].staRemaining > 0 ? (
+                          ) : route.busInfo.staRemaining > 0 ? (
                             <>
                               <span className="text-lg leading-none">0</span>
                               <span>m</span>
                             </>
                           ) : null}
-                        </div> */}
                         </div>
-                      )
-                    ) : (
-                      <div className="text-sm text-gray-500">非營運時間</div>
+                      </div>
                     )}
                   </div>
                 );
@@ -134,7 +156,7 @@ export default function StationInfoBlock({
                       className="cursor-pointer text-sm text-gray-500 underline underline-offset-2"
                       onClick={() => setShowNotOperatingRoutes(true)}
                     >
-                      顯示非營運時間路線
+                      顯示非營運中路線
                     </div>
                   </div>
                 )}
