@@ -16,7 +16,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "mTransit 澳門巴士預報",
-  description: "一名澳門市民因為睇唔順眼巴士報站而整嘅網站",
+  description: "一個可能好用過官方巴士報站嘅網站？",
   manifest: "/manifest.json",
   authors: [{ name: "Matthew Ngan", url: "https://github.com/cwngan" }],
   icons: [
