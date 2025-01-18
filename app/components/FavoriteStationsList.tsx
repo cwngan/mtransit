@@ -9,10 +9,11 @@ export default function FavoriteStationsList() {
   const unsetFavorite = useCallback((code: string) => {
     setFavoriteStations((prev) => {
       if (prev === null) return null;
-      const idx = prev.findIndex((s) => s == code);
-      if (idx === -1) return prev;
-      prev.splice(idx);
-      return [...prev];
+      const arr = [...prev];
+      const idx = arr.findIndex((s) => s === code);
+      if (idx === -1) return arr;
+      arr.splice(idx, 1);
+      return arr;
     });
   }, []);
 
