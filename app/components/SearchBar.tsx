@@ -9,7 +9,7 @@ import { APIInstance } from "../instances/axios";
 const search = async (data: { query: string }) => {
   return new Promise<any>((resolve, reject) => {
     APIInstance.request({
-      url: "search",
+      url: "search-routes",
       data,
     }).then((res) => resolve(res.data));
   });

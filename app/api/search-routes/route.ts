@@ -1,7 +1,7 @@
 "use server";
 
 import { NextRequest, NextResponse } from "next/server";
-import search from "../search";
+import searchRoutes from "../search-routes";
 
 const requiredKeys = ["query"];
 
@@ -14,5 +14,5 @@ export async function POST(request: NextRequest) {
     if (params?.[k] == null)
       return NextResponse.json({ error: `Missing ${k}` }, { status: 400 });
   }
-  return NextResponse.json(await search(params));
+  return NextResponse.json(await searchRoutes(params));
 }

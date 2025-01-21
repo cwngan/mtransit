@@ -1,6 +1,6 @@
 import { supabase } from "../instances/supabase";
 
-export default async function search(params: { query: string }) {
+export default async function searchRoutes(params: { query: string }) {
   const { query } = params;
   if (!supabase) return;
   const { data, error } = await supabase
