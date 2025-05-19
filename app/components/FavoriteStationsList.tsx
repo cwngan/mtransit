@@ -1,10 +1,49 @@
-import { useState, useCallback, useEffect, useActionState } from "react";
+import { useState, useCallback, useEffect, Dispatch, useContext } from "react";
 import StationInfoBlock from "./StationInfoBlock";
+import { Station, StationsNearbyData } from "../types/data";
+import CurrentTabContext from "../store/CurrentTabContext";
+import { supabase } from "../instances/supabase";
 
-export default function FavoriteStationsList() {
+interface FavoriteStationsListProps {
+  updateStations: Dispatch<
+    | {
+        type: "nearby";
+        payload: StationsNearbyData;
+      }
+    | {
+        type: "favorite";
+        payload: Station[];
+      }
+  >;
+}
+
+export default function FavoriteStationsList({
+  updateStations,
+}: FavoriteStationsListProps) {
+  const currentTab = useContext(CurrentTabContext);
   const [favoriteStations, setFavoriteStations] = useState<string[] | null>(
     null,
   );
+
+  useEffect(() => {
+    if (currentTab === 1) {
+      if (!supabase) return;
+      supabase
+        .from("stations")
+        .select("code,lat,lon")
+        .in("code", favoriteStations || [])
+        .then((res) => {
+          if (!res.data) return;
+          console.log(res.data);
+          updateStations({
+            type: "favorite",
+            payload: res.data.map(({ code, lat, lon }) => {
+              return { code, latitude: lat || 0, longitude: lon || 0 };
+            }),
+          });
+        });
+    }
+  }, [currentTab, updateStations, favoriteStations]);
 
   const unsetFavorite = useCallback((code: string) => {
     setFavoriteStations((prev) => {
