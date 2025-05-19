@@ -23,6 +23,7 @@ interface StationInfoBlock {
   fromTab: number;
   staName?: string;
   distance?: number;
+  laneName?: string;
   unsetFavorite?: (code: string) => void;
 }
 export default function StationInfoBlock({
@@ -30,6 +31,7 @@ export default function StationInfoBlock({
   fromTab,
   staName,
   distance,
+  laneName,
   unsetFavorite,
 }: StationInfoBlock) {
   const [stationInfo, setStationInfo] = useState<StationInfoData | null>(null);
@@ -57,6 +59,11 @@ export default function StationInfoBlock({
             <LoadingPlaceholder blocks={1} width="6rem" lineHeight="1.5rem" />
           )}
         </div>
+        {(laneName || stationInfo?.data?.station?.lane_name) && (
+          <div className="rounded bg-gray-200 p-1 text-xs leading-none text-gray-600">
+            {laneName || stationInfo?.data?.station?.lane_name}
+          </div>
+        )}
         <div className="rounded bg-gray-200 p-1 text-xs leading-none text-gray-600">
           {staCode}
         </div>
