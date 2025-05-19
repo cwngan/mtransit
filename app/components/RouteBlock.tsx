@@ -24,9 +24,9 @@ export default function RouteBlock({
       <div
         className={clsx(
           "flex min-h-full min-w-8 items-center justify-center p-2 font-bold",
-          color === "Orange"
+          color.toLowerCase() === "orange"
             ? "bg-tcm-orange"
-            : color === "Blue"
+            : color.toLowerCase() === "blue"
               ? "bg-transmac-blue"
               : "",
         )}
@@ -36,9 +36,9 @@ export default function RouteBlock({
       <div
         className={clsx(
           "flex h-full items-end p-2 leading-none",
-          color === "Orange"
+          color.toLowerCase() === "orange"
             ? "bg-tcm-brown text-white"
-            : color === "Blue"
+            : color.toLowerCase() === "blue"
               ? "bg-transmac-yellow"
               : "",
         )}
