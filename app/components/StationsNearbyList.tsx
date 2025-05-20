@@ -69,6 +69,7 @@ export default function StationsNearbyList({
     if (dataString !== null) {
       const data = JSON.parse(dataString);
       setStationsNearby({ data, status: 200 });
+      setPending(false);
     }
   }, [setStationsNearby]);
 
@@ -83,24 +84,22 @@ export default function StationsNearbyList({
   return (
     <div className="h-full overflow-hidden rounded-md">
       <div className="flex h-full flex-col gap-3 overflow-auto">
-        {stationsNearby?.data ? (
-          <div className="flex flex-col gap-3">
-            {pending ? (
-              <LoadingPlaceholder lines={5} lineHeight="3.5rem" gap="0" />
-            ) : stationsNearby?.data ? (
-              stationsNearby.data.map((station) => {
-                return (
-                  <StationInfoBlock
-                    staCode={station.code}
-                    key={station.id}
-                    fromTab={0}
-                    distance={station.distance}
-                  />
-                );
-              })
-            ) : null}
-          </div>
-        ) : null}
+        <div className="flex flex-col gap-3">
+          {pending ? (
+            <LoadingPlaceholder lines={5} lineHeight="7.5rem" gap="0" />
+          ) : stationsNearby?.data ? (
+            stationsNearby.data.map((station) => {
+              return (
+                <StationInfoBlock
+                  staCode={station.code}
+                  key={station.id}
+                  fromTab={0}
+                  distance={station.distance}
+                />
+              );
+            })
+          ) : null}
+        </div>
       </div>
     </div>
   );
