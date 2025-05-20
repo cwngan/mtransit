@@ -170,7 +170,9 @@ export default function StationInfoBlock({
             </>
           ) : null}
         </div>
-      ) : null}
+      ) : (
+        <LoadingPlaceholder blocks={3} random gap="0" />
+      )}
     </div>
   );
 }

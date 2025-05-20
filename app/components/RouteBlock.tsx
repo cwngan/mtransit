@@ -23,12 +23,9 @@ export default function RouteBlock({
     >
       <div
         className={clsx(
-          "flex min-h-full min-w-8 items-center justify-center p-2 font-bold",
-          color.toLowerCase() === "orange"
-            ? "bg-tcm-orange"
-            : color.toLowerCase() === "blue"
-              ? "bg-transmac-blue"
-              : "",
+          "flex min-h-full min-w-8 items-center justify-center p-2 font-bold leading-none",
+          color.toLowerCase() === "orange" && "bg-tcm-orange",
+          color.toLowerCase() === "blue" && "bg-transmac-blue",
         )}
       >
         <div className="text-white">{name}</div>
@@ -36,11 +33,8 @@ export default function RouteBlock({
       <div
         className={clsx(
           "flex h-full items-end p-2 leading-none",
-          color.toLowerCase() === "orange"
-            ? "bg-tcm-brown text-white"
-            : color.toLowerCase() === "blue"
-              ? "bg-transmac-yellow"
-              : "",
+          color.toLowerCase() === "orange" && "bg-tcm-brown text-white",
+          color.toLowerCase() === "blue" && "bg-transmac-yellow",
         )}
       >
         {mode === "from" ? (
@@ -54,11 +48,6 @@ export default function RouteBlock({
             <div className="leading-none">{destination.sta_name}</div>
           </>
         )}
-        {/* {type === 2 ? (
-                      <div className="mx-1">↺</div>
-                    ) : (
-                      <div className="mx-1">⇨</div>
-                    )} */}
       </div>
     </div>
   );

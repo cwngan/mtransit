@@ -22,7 +22,7 @@ export default function StationsNearbyList() {
   const [gettingPosition, setGettingPosition] = useState<boolean>(false);
   const [stationsNearby, setStationsNearby] =
     useState<StationsNearbyData | null>(null);
-  const [pending, setPending] = useState(false);
+  const [pending, setPending] = useState(true);
   const getPosition = useCallback(() => {
     if (window.navigator.geolocation) {
       setGettingPosition(true);
@@ -57,6 +57,7 @@ export default function StationsNearbyList() {
     if (dataString !== null) {
       const data = JSON.parse(dataString);
       setStationsNearby({ data, status: 200 });
+      setPending(false);
     }
   }, []);
 
@@ -88,26 +89,24 @@ export default function StationsNearbyList() {
             ? "尋找附近站點"
             : "更新附近站點"}
       </Button>
-      {stationsNearby?.data ? (
-        <div className="flex flex-col gap-3">
-          {pending ? (
-            <LoadingPlaceholder lines={5} lineHeight="3.5rem" gap="0" />
-          ) : stationsNearby?.data ? (
-            stationsNearby.data.map((station) => {
-              return (
-                <StationInfoBlock
-                  staCode={station.code}
-                  key={station.id}
-                  fromTab={0}
-                  laneName={station.lane_name}
-                  staName={station.name_zh}
-                  distance={station.distance}
-                />
-              );
-            })
-          ) : null}
-        </div>
-      ) : null}
+      <div className="flex flex-col gap-3">
+        {pending ? (
+          <LoadingPlaceholder lines={5} lineHeight="7.5rem" gap="0" />
+        ) : stationsNearby?.data ? (
+          stationsNearby.data.map((station) => {
+            return (
+              <StationInfoBlock
+                staCode={station.code}
+                key={station.id}
+                fromTab={0}
+                laneName={station.lane_name}
+                staName={station.name_zh}
+                distance={station.distance}
+              />
+            );
+          })
+        ) : null}
+      </div>
     </div>
   );
 }
