@@ -80,6 +80,21 @@ export default function StationsMap({
   }, [setLocation, currentTab]);
   useEffect(() => {
     if (!mapRef.current) return;
+    if (stations.length > markers.current.length) {
+      for (let i = markers.current.length; i < stations.length; i++) {
+        markers.current.push(
+          new Marker({
+            draggable: false,
+          }),
+        );
+      }
+    }
+    if (stations.length < markers.current.length) {
+      for (let i = markers.current.length; i > stations.length; i--) {
+        markers.current[i - 1].remove();
+        markers.current.pop();
+      }
+    }
     stations.forEach((station, i) => {
       if (
         !station.latitude ||

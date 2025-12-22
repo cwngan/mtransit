@@ -49,9 +49,11 @@ export default function StationsNearbyList({
   updateStations,
 }: StationsNearbyListProps) {
   const [pending, setPending] = useState(false);
+  const currentTab = useContext(CurrentTabContext);
 
   useEffect(() => {
     if (!location?.latitude || !location?.longitude) return;
+    if (currentTab !== 0) return;
     setPending(true);
     getStationsNearby({
       position: { latitude: location.latitude, longitude: location.longitude },
@@ -60,7 +62,7 @@ export default function StationsNearbyList({
       setPending(false);
       updateStations({ type: "nearby", payload: data });
     });
-  }, [location, setStationsNearby, updateStations]);
+  }, [currentTab, location, setStationsNearby, updateStations]);
 
   useEffect(() => {
     if (!window?.localStorage) return;

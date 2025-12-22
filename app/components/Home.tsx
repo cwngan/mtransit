@@ -99,7 +99,7 @@ export default function Home() {
           <div
             className={clsx(
               currentTab === 1 ? "block" : "hidden",
-              "h-full overflow-hidden rounded-tl-xl bg-orange-600",
+              "h-full overflow-hidden rounded-tl-xl bg-orange-600 p-3",
             )}
           >
             <FavoriteStationsList {...{ updateStations }} />
