@@ -1,6 +1,6 @@
 import { supabase } from "../instances/supabase";
 
-export async function getBus(params: { codes: string[] }) {
+export async function getStationLocation(params: { codes: string[] }) {
   if (!supabase) return null;
   const result = await supabase
     .from("stations")
