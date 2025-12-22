@@ -39,18 +39,27 @@ def fetch_from_dsat(url: str, method: str, data: dict | None = None):
 
 
 def get_route_list():
-    return fetch_from_dsat("macauweb/getRouteAndCompanyList.html", "post").json()
+    return fetch_from_dsat(
+        "macauweb/getRouteAndCompanyList.html", "post"
+    ).json()
 
 
 def get_route_data(route_name: str, direction: str, lang: str = "zh_tw"):
     return fetch_from_dsat(
         "macauweb/getRouteData.html",
         "post",
-        {"action": "sd", "routeName": route_name, "dir": direction, "lang": lang},
+        {
+            "action": "sd",
+            "routeName": route_name,
+            "dir": direction,
+            "lang": lang,
+        },
     ).json()
 
 
-def get_detailed_route_data(route_code: str, direction: str, lang: str = "zh_tw"):
+def get_detailed_route_data(
+    route_code: str, direction: str, lang: str = "zh_tw"
+):
     return fetch_from_dsat(
         "ddbus/app/routestation/station",
         "post",
@@ -81,8 +90,34 @@ def update_one_route_data(route_name: str, direction: str, supabase: Client):
     route_data = get_route_data(route_name, direction)["data"]
     route_code = route_data["routeCode"]
 
-    print(f"Updating origin and destination of {route_name}, dir {direction}...")
-    actual_stations_of_route = [sta["staCode"] for sta in route_data["routeInfo"]]
+    actual_stations_of_route = [
+        sta["staCode"] for sta in route_data["routeInfo"]
+    ]
+
+    print(f"Updating stations of {route_name}, dir {direction}...")
+    detailed_route_data = get_detailed_route_data(route_code, direction)[
+        "data"
+    ][0]
+
+    values_to_upsert = list(
+        {
+            station["stationcode"]: {
+                "code": station["stationcode"],
+                "dsat_id": station["stacode"],
+                "dsat_label": station["stalabel"],
+                "image_url": station["stationurl"],
+            }
+            for station in detailed_route_data["routeinfo"]
+        }.values()
+    )
+    supabase.from_("stations").upsert(
+        values_to_upsert,
+        on_conflict="dsat_id",
+    ).execute()
+
+    print(
+        f"Updating origin and destination of {route_name}, dir {direction}..."
+    )
     supabase.from_("route_info").update(
         {
             "origin": route_data["routeInfo"][0]["staCode"],
@@ -91,23 +126,6 @@ def update_one_route_data(route_name: str, direction: str, supabase: Client):
             "stations": actual_stations_of_route,
         }
     ).eq("key", f"{route_name}_{direction}").execute()
-
-    print(f"Updating stations of {route_name}, dir {direction}...")
-    detailed_route_data = get_detailed_route_data(route_code, direction)["data"][0]
-    supabase.from_("stations").upsert(
-        list(
-            {
-                station["stationcode"]: {
-                    "code": station["stationcode"],
-                    "dsat_id": station["stacode"],
-                    "dsat_label": station["stalabel"],
-                    "image_url": station["stationurl"],
-                }
-                for station in detailed_route_data["routeinfo"]
-            }.values()
-        ),
-        on_conflict="code",
-    ).execute()
 
     print(f"Appending route to its stations {route_name}, dir {direction}...")
     for station in tqdm(detailed_route_data["routeinfo"], leave=False):
@@ -143,7 +161,9 @@ def update_one_route_data(route_name: str, direction: str, supabase: Client):
         print(
             f"Removing {len(extra_stations)} connection(s) of non-existing previous stations of the route to the route..."
         )
-        supabase.from_("stations").upsert(extra_stations, on_conflict="id").execute()
+        supabase.from_("stations").upsert(
+            extra_stations, on_conflict="id"
+        ).execute()
 
     print(f"Updating locations of stations of {route_name}, dir {direction}...")
     update_one_location_data(route_name, direction, route_code, supabase)
@@ -162,7 +182,9 @@ def update_one_location_data(
                     "code": station["stationCode"],
                     "lat": float(station["latitude"]),
                     "lon": float(station["longitude"]),
-                    "lane_name": station["laneName"] if "laneName" in station else None,
+                    "lane_name": (
+                        station["laneName"] if "laneName" in station else None
+                    ),
                 }
             ],
             on_conflict="code",
@@ -199,7 +221,9 @@ def update_route_data(route_list, supabase: Client):
                 }
             )
     print("Updating route_info table...")
-    supabase.from_("route_info").upsert(rows_to_add, on_conflict="key").execute()
+    supabase.from_("route_info").upsert(
+        rows_to_add, on_conflict="key"
+    ).execute()
     for row in rows_to_add:
         route_name = row["name"]
         direction = row["direction"]
