@@ -65,9 +65,22 @@ export default async function getStationInfo(params: { staCode: string }) {
       error: "could not connect to db.",
       status: 500,
     };
-  const res = await supabase.from("stations").select("*").eq("code", staCode);
-  const routeKeys = res.data?.[0]?.routes;
-  if (!res.data || !routeKeys || routeKeys.length === 0)
+  const stationRes = await supabase
+    .from("stations")
+    .select("*")
+    .eq("code", staCode);
+  const routeInfoRes = await supabase
+    .from("route_info")
+    .select("key")
+    .contains("stations", [staCode]);
+  const routeKeys = routeInfoRes.data?.map((r) => r.key);
+
+  if (
+    !stationRes.data ||
+    !routeInfoRes.data ||
+    !routeKeys ||
+    routeKeys.length === 0
+  )
     return { error: "no data.", status: 500 };
   const routes =
     (
@@ -80,7 +93,7 @@ export default async function getStationInfo(params: { staCode: string }) {
     method: "POST",
     url: "ddbus/dynamic/station/v2",
     data: new URLSearchParams({
-      staCode: res.data[0].dsat_id || "",
+      staCode: stationRes.data[0].dsat_id || "",
       action: "staCode",
       BypassToken: "HuatuTesting0307", // some weird entry that has to be put in order to yield results
     }),
@@ -144,7 +157,7 @@ export default async function getStationInfo(params: { staCode: string }) {
       : a.busInfo.distance - b.busInfo.distance;
   });
   return {
-    data: { routes: data, station: res.data?.[0] },
+    data: { routes: data, station: stationRes.data?.[0] },
     status: 200,
   };
 }
