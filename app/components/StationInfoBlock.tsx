@@ -112,7 +112,7 @@ export default function StationInfoBlock({
                       route.busInfo.operating ? (
                         <div className="text-lg">未出發</div>
                       ) : (
-                        <div className="text-sm text-gray-500">非營運中</div>
+                        <div className="text-sm text-gray-500">服務時間外</div>
                       )
                     ) : (
                       <div className="flex gap-1 text-sm">
@@ -163,7 +163,7 @@ export default function StationInfoBlock({
                       className="cursor-pointer text-sm text-gray-500 underline underline-offset-2"
                       onClick={() => setShowNotOperatingRoutes(true)}
                     >
-                      顯示非營運中路線
+                      顯示服務時間外路線
                     </div>
                   </div>
                 )}
