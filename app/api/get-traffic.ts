@@ -11,6 +11,7 @@ export default async function getTraffic(params: {
     routeCode,
     direction,
     indexType: "00",
+    lang: "zh_tw", // idk why there's no text response but still needs
   };
 
   const result = await DSATInstance.request<TrafficData>({
