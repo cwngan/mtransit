@@ -37,6 +37,7 @@ async function updateDatabase(
               });
           } else {
             // console.log(`Updating ${sta.stationName}`);
+            // deprecated
             supabase
               .rpc("append_routes", {
                 station_id: sta.stationCode,

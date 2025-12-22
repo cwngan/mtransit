@@ -128,15 +128,15 @@ def update_one_route_data(route_name: str, direction: str, supabase: Client):
         }
     ).eq("key", f"{route_name}_{direction}").execute()
 
-    print(f"Appending route to its stations {route_name}, dir {direction}...")
-    for station in tqdm(detailed_route_data["routeinfo"], leave=False):
-        supabase.rpc(
-            "append_routes",
-            {
-                "station_id": station["stationcode"],
-                "route_name": f"{route_name}_{direction}",
-            },
-        ).execute()
+    # print(f"Appending route to its stations {route_name}, dir {direction}...")
+    # for station in tqdm(detailed_route_data["routeinfo"], leave=False):
+    #     supabase.rpc(
+    #         "append_routes",
+    #         {
+    #             "station_id": station["stationcode"],
+    #             "route_name": f"{route_name}_{direction}",
+    #         },
+    #     ).execute()
 
     print(
         "Counting connection of non-existing previous stations of the route to the route..."
