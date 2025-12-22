@@ -102,6 +102,7 @@ def update_one_route_data(route_name: str, direction: str, supabase: Client):
     values_to_upsert = list(
         {
             station["stationcode"]: {
+                "name_zh": station["staname"],
                 "code": station["stationcode"],
                 "dsat_id": station["stacode"],
                 "dsat_label": station["stalabel"],
