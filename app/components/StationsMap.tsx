@@ -103,11 +103,15 @@ export default function StationsMap({
         !mapRef.current
       )
         return;
+      const popup = new mapboxgl.Popup({ offset: 25 }).setText(
+        `${station.code}`,
+      );
       markers.current[i]
         .setLngLat({
           lat: station.latitude,
           lng: station.longitude,
         })
+        .setPopup(popup)
         .addTo(mapRef.current);
     });
   }, [stations]);
