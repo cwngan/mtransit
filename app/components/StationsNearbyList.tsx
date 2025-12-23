@@ -1,10 +1,19 @@
 import { Button } from "@headlessui/react";
 import clsx from "clsx";
-import { useState, useCallback, useEffect, useActionState } from "react";
+import {
+  useState,
+  useCallback,
+  useEffect,
+  useActionState,
+  SetStateAction,
+  Dispatch,
+  useContext,
+} from "react";
 import StationInfoBlock from "./StationInfoBlock";
 import LoadingPlaceholder from "./LoadingPlaceholder";
-import { StationsNearbyData } from "../types/data";
+import { Station, StationsNearbyData } from "../types/data";
 import { APIInstance } from "../instances/axios";
+import CurrentTabContext from "../store/CurrentTabContext";
 
 const getStationsNearby = async (data: {
   position: { latitude: number; longitude: number };
@@ -17,38 +26,43 @@ const getStationsNearby = async (data: {
   });
 };
 
-export default function StationsNearbyList() {
-  const [position, setPosition] = useState<GeolocationCoordinates | null>(null);
-  const [gettingPosition, setGettingPosition] = useState<boolean>(false);
-  const [stationsNearby, setStationsNearby] =
-    useState<StationsNearbyData | null>(null);
-  const [pending, setPending] = useState(true);
-  const getPosition = useCallback(() => {
-    if (window.navigator.geolocation) {
-      setGettingPosition(true);
-      window.navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setPosition(position.coords);
-          setGettingPosition(false);
-        },
-        (error) => console.log(error),
-        {
-          timeout: 5000,
-        },
-      );
-    }
-  }, []);
+interface StationsNearbyListProps {
+  location: { latitude: number; longitude: number } | null;
+  stationsNearby: StationsNearbyData | null;
+  setStationsNearby: Dispatch<SetStateAction<StationsNearbyData | null>>;
+  updateStations: Dispatch<
+    | {
+        type: "nearby";
+        payload: StationsNearbyData;
+      }
+    | {
+        type: "favorite";
+        payload: Station[];
+      }
+  >;
+}
+
+export default function StationsNearbyList({
+  location,
+  stationsNearby,
+  setStationsNearby,
+  updateStations,
+}: StationsNearbyListProps) {
+  const [pending, setPending] = useState(false);
+  const currentTab = useContext(CurrentTabContext);
 
   useEffect(() => {
-    if (!position?.latitude || !position?.longitude) return;
+    if (!location?.latitude || !location?.longitude) return;
+    if (currentTab !== 0) return;
     setPending(true);
     getStationsNearby({
-      position: { latitude: position.latitude, longitude: position.longitude },
+      position: { latitude: location.latitude, longitude: location.longitude },
     }).then((data) => {
       setStationsNearby(data);
       setPending(false);
+      updateStations({ type: "nearby", payload: data });
     });
-  }, [position]);
+  }, [currentTab, location, setStationsNearby, updateStations]);
 
   useEffect(() => {
     if (!window?.localStorage) return;
@@ -59,7 +73,7 @@ export default function StationsNearbyList() {
       setStationsNearby({ data, status: 200 });
       setPending(false);
     }
-  }, []);
+  }, [setStationsNearby]);
 
   useEffect(() => {
     if (!stationsNearby?.data) return;
@@ -70,42 +84,24 @@ export default function StationsNearbyList() {
   }, [stationsNearby]);
 
   return (
-    <div className="flex flex-col gap-3 p-3">
-      <Button
-        onClick={() => {
-          getPosition();
-        }}
-        type="button"
-        className={clsx(
-          "rounded-lg p-3 leading-none text-white shadow-inner",
-          "bg-gray-600 data-[active]:bg-gray-700",
-          "disabled:opacity-50",
-        )}
-        disabled={gettingPosition || pending}
-      >
-        {gettingPosition
-          ? "定位中..."
-          : !stationsNearby?.data
-            ? "尋找附近站點"
-            : "更新附近站點"}
-      </Button>
-      <div className="flex flex-col gap-3">
-        {pending ? (
-          <LoadingPlaceholder lines={5} lineHeight="7.5rem" gap="0" />
-        ) : stationsNearby?.data ? (
-          stationsNearby.data.map((station) => {
-            return (
-              <StationInfoBlock
-                staCode={station.code}
-                key={station.id}
-                fromTab={0}
-                laneName={station.lane_name}
-                staName={station.name_zh}
-                distance={station.distance}
-              />
-            );
-          })
-        ) : null}
+    <div className="h-full overflow-hidden rounded-md">
+      <div className="flex h-full flex-col gap-3 overflow-auto">
+        <div className="flex flex-col gap-3">
+          {pending ? (
+            <LoadingPlaceholder lines={5} lineHeight="7.5rem" gap="0" />
+          ) : stationsNearby?.data ? (
+            stationsNearby.data.map((station) => {
+              return (
+                <StationInfoBlock
+                  staCode={station.code}
+                  key={station.id}
+                  fromTab={0}
+                  distance={station.distance}
+                />
+              );
+            })
+          ) : null}
+        </div>
       </div>
     </div>
   );

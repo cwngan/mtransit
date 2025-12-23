@@ -1,5 +1,11 @@
 import { Database, Json } from "@/database.types";
 
+export interface Station {
+  code: string;
+  latitude?: number;
+  longitude?: number;
+}
+
 export interface StationsNearbyData {
   error?: string;
   data?:
