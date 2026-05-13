@@ -12,96 +12,112 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "13.0.4";
   };
-  graphql_public: {
-    Tables: {
-      [_ in never]: never;
-    };
-    Views: {
-      [_ in never]: never;
-    };
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json;
-          operationName?: string;
-          query?: string;
-          variables?: Json;
-        };
-        Returns: Json;
-      };
-    };
-    Enums: {
-      [_ in never]: never;
-    };
-    CompositeTypes: {
-      [_ in never]: never;
-    };
-  };
   public: {
     Tables: {
+      company: {
+        Row: {
+          color: string;
+          created_at: string;
+          name: string;
+        };
+        Insert: {
+          color: string;
+          created_at?: string;
+          name: string;
+        };
+        Update: {
+          color?: string;
+          created_at?: string;
+          name?: string;
+        };
+        Relationships: [];
+      };
       route_info: {
         Row: {
           change: boolean;
           code: string | null;
-          color: string;
           company: string;
           created_at: string;
-          destination: string | null;
           direction: number;
-          id: number;
+          disabled: boolean;
           key: string;
           name: string;
           order_key: number;
-          origin: string | null;
           stations: string[] | null;
           type: number;
         };
         Insert: {
           change: boolean;
           code?: string | null;
-          color: string;
           company: string;
           created_at?: string;
-          destination?: string | null;
           direction: number;
-          id?: number;
+          disabled?: boolean;
           key: string;
           name: string;
           order_key?: number;
-          origin?: string | null;
           stations?: string[] | null;
           type: number;
         };
         Update: {
           change?: boolean;
           code?: string | null;
-          color?: string;
           company?: string;
           created_at?: string;
-          destination?: string | null;
           direction?: number;
-          id?: number;
+          disabled?: boolean;
           key?: string;
           name?: string;
           order_key?: number;
-          origin?: string | null;
           stations?: string[] | null;
           type?: number;
         };
         Relationships: [
           {
-            foreignKeyName: "route-info_destination_fkey";
-            columns: ["destination"];
+            foreignKeyName: "route_info_company_fkey";
+            columns: ["company"];
+            isOneToOne: false;
+            referencedRelation: "company";
+            referencedColumns: ["name"];
+          },
+        ];
+      };
+      route_stations: {
+        Row: {
+          created_at: string;
+          direction: number;
+          dsat_id: string | null;
+          name: string;
+          position: number;
+        };
+        Insert: {
+          created_at?: string;
+          direction: number;
+          dsat_id?: string | null;
+          name: string;
+          position: number;
+        };
+        Update: {
+          created_at?: string;
+          direction?: number;
+          dsat_id?: string | null;
+          name?: string;
+          position?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "route_station_dsat_id_fkey";
+            columns: ["dsat_id"];
             isOneToOne: false;
             referencedRelation: "stations";
-            referencedColumns: ["code"];
+            referencedColumns: ["dsat_id"];
           },
           {
-            foreignKeyName: "route-info_origin_fkey";
-            columns: ["origin"];
+            foreignKeyName: "route_station_name_direction_fkey";
+            columns: ["name", "direction"];
             isOneToOne: false;
-            referencedRelation: "stations";
-            referencedColumns: ["code"];
+            referencedRelation: "route_info";
+            referencedColumns: ["name", "direction"];
           },
         ];
       };
@@ -109,9 +125,8 @@ export type Database = {
         Row: {
           code: string;
           created_at: string;
-          dsat_id: string | null;
+          dsat_id: string;
           dsat_label: string | null;
-          id: string;
           image_url: string | null;
           lane_name: string | null;
           lat: number | null;
@@ -124,9 +139,8 @@ export type Database = {
         Insert: {
           code: string;
           created_at?: string;
-          dsat_id?: string | null;
+          dsat_id: string;
           dsat_label?: string | null;
-          id?: string;
           image_url?: string | null;
           lane_name?: string | null;
           lat?: number | null;
@@ -139,9 +153,8 @@ export type Database = {
         Update: {
           code?: string;
           created_at?: string;
-          dsat_id?: string | null;
+          dsat_id?: string;
           dsat_label?: string | null;
-          id?: string;
           image_url?: string | null;
           lane_name?: string | null;
           lat?: number | null;
@@ -158,44 +171,18 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      append_routes: {
-        Args: { route_name: string; station_id: string };
-        Returns: {
-          code: string;
-          created_at: string;
-          dsat_id: string | null;
-          dsat_label: string | null;
-          id: string;
-          image_url: string | null;
-          lane_name: string | null;
-          lat: number | null;
-          lon: number | null;
-          name_en: string | null;
-          name_pt: string | null;
-          name_zh: string | null;
-          routes: string[] | null;
-        };
-        SetofOptions: {
-          from: "*";
-          to: "stations";
-          isOneToOne: true;
-          isSetofReturn: false;
-        };
-      };
       find_stations_nearby: {
         Args: { target_lat: number; target_lon: number };
         Returns: {
           code: string;
           created_at: string;
           distance: number;
-          id: string;
           lane_name: string;
           lat: number;
           lon: number;
           name_en: string;
           name_pt: string;
           name_zh: string;
-          routes: string[];
         }[];
       };
       get_all_routes_with_origin_and_destination: {
@@ -206,11 +193,10 @@ export type Database = {
           color: string;
           company: string;
           destination: Json;
-          direction: string;
-          key: string;
+          direction: number;
           name: string;
           origin: Json;
-          type: number;
+          type: string;
         }[];
       };
     };
@@ -344,9 +330,6 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {},
   },

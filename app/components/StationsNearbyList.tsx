@@ -94,7 +94,7 @@ export default function StationsNearbyList({
               return (
                 <StationInfoBlock
                   staCode={station.code}
-                  key={station.id}
+                  key={station.code}
                   fromTab={0}
                   distance={station.distance}
                 />

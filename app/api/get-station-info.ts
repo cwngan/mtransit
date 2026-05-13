@@ -69,26 +69,29 @@ export default async function getStationInfo(params: { staCode: string }) {
     .from("stations")
     .select("*")
     .eq("code", staCode);
-  const routeInfoRes = await supabase
-    .from("route_info")
-    .select("key")
-    .contains("stations", [staCode]);
-  const routeKeys = routeInfoRes.data?.map((r) => r.key);
+  if (!stationRes.data) return { error: "no data.", status: 500 };
 
-  if (
-    !stationRes.data ||
-    !routeInfoRes.data ||
-    !routeKeys ||
-    routeKeys.length === 0
-  )
+  const routeKeys = await supabase
+    .from("route_stations")
+    .select("name,direction")
+    .match({ dsat_id: stationRes.data[0].dsat_id });
+
+  if (!routeKeys.data || routeKeys.data.length === 0)
     return { error: "no data.", status: 500 };
-  const routes =
+
+  const unfilteredRoutes =
     (
       await supabase
         .rpc("get_all_routes_with_origin_and_destination")
-        .in("key", routeKeys)
         .select("*")
     ).data || [];
+
+  const routes = unfilteredRoutes.filter((route) =>
+    routeKeys.data?.some(
+      (key) => key.name === route.name && key.direction === route.direction,
+    ),
+  );
+
   const dsatStationInfo = await DSATInstance.request<DSATStationInfo[]>({
     method: "POST",
     url: "ddbus/dynamic/station/v2",
@@ -126,7 +129,6 @@ export default async function getStationInfo(params: { staCode: string }) {
         origin: route.origin,
         destination: route.destination,
         direction: route.direction,
-        key: route.key,
         code: route.code,
         staIndex: res.staIndex,
         busInfo: {
