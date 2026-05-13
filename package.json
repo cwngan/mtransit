@@ -6,7 +6,8 @@
     "dev": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "gentypes": "supabase gen types --lang=typescript --project-id yehblwxzgcnhuphvyxcv --schema public > database.types.ts"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
@@ -38,6 +39,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
     "postcss": "^8",
+    "supabase": "^2.98.2",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
