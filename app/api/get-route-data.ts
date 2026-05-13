@@ -3,128 +3,128 @@ import { DSATInstance } from "../instances/axios";
 import getRequestToken from "../utils/getRequestToken";
 import { supabase } from "../instances/supabase";
 
-async function updateDatabase(
-  routeList: any,
-  routeData: RouteData,
-  detailedInfo: any,
-  routeName: string,
-  dir: string,
-) {
-  if (!supabase) return;
-  // add new routes to route_info
-  const rowsToAdd = [];
-  for (let route of routeList.data.data.routeList) {
-    const company = route.color === "Blue" ? "新福利" : "澳門";
-    rowsToAdd.push({
-      company,
-      color: route.color,
-      type: parseInt(route.direction),
-      direction: 0,
-      change: route.routeChange === "1",
-      name: route.routeName,
-      key: `${route.routeName}_${0}`,
-    });
-    if (route.direction === "0")
-      rowsToAdd.push({
-        company,
-        color: route.color,
-        type: parseInt(route.direction),
-        direction: 1,
-        change: route.routeChange === "1",
-        name: route.routeName,
-        key: `${route.routeName}_${1}`,
-      });
-  }
-  await supabase.from("route_info").upsert(rowsToAdd, { onConflict: "key" });
-  // update route data
-  if (routeData.data?.routeInfo) {
-    const res = await supabase
-      .from("route_info")
-      .update({
-        origin: routeData.data.routeInfo[0].staCode,
-        destination: routeData.data.routeInfo.findLast(() => true)?.staCode,
-        code: routeData.data.routeCode,
-        stations: routeData.data.routeInfo.map((sta) => sta.staCode),
-      })
-      .eq("key", `${routeName}_${dir}`);
-    // console.log(res)
-  }
+// async function updateDatabase(
+//   routeList: any,
+//   routeData: RouteData,
+//   detailedInfo: any,
+//   routeName: string,
+//   dir: string,
+// ) {
+//   if (!supabase) return;
+//   // add new routes to route_info
+//   const rowsToAdd = [];
+//   for (let route of routeList.data.data.routeList) {
+//     const company = route.color === "Blue" ? "新福利" : "澳門";
+//     rowsToAdd.push({
+//       company,
+//       color: route.color,
+//       type: parseInt(route.direction),
+//       direction: 0,
+//       change: route.routeChange === "1",
+//       name: route.routeName,
+//       key: `${route.routeName}_${0}`,
+//     });
+//     if (route.direction === "0")
+//       rowsToAdd.push({
+//         company,
+//         color: route.color,
+//         type: parseInt(route.direction),
+//         direction: 1,
+//         change: route.routeChange === "1",
+//         name: route.routeName,
+//         key: `${route.routeName}_${1}`,
+//       });
+//   }
+//   await supabase.from("route_info").upsert(rowsToAdd, { onConflict: "key" });
+//   // update route data
+//   if (routeData.data?.routeInfo) {
+//     const res = await supabase
+//       .from("route_info")
+//       .update({
+//         origin: routeData.data.routeInfo[0].staCode,
+//         destination: routeData.data.routeInfo.findLast(() => true)?.staCode,
+//         code: routeData.data.routeCode,
+//         stations: routeData.data.routeInfo.map((sta) => sta.staCode),
+//       })
+//       .eq("key", `${routeName}_${dir}`);
+//     // console.log(res)
+//   }
 
-  if (detailedInfo.header.status === "000") {
-    const data = detailedInfo.data[0];
-    await Promise.all(
-      data.routeinfo.map((station: any) => {
-        return supabase
-          ?.from("stations")
-          .update({
-            dsat_id: station.stacode,
-            dsat_label: station.stalabel,
-            image_url: station.stationurl,
-          })
-          .eq("code", station.stationcode);
-      }),
-    );
-    for (let sta of data.routeinfo) {
-      supabase
-        .from("stations")
-        .select()
-        .eq("code", sta.stationcode)
-        .then((value) => {
-          if (!supabase) return;
-          if (value.data?.length === 0) {
-            supabase
-              .from("stations")
-              .upsert(
-                [
-                  {
-                    code: sta.stationcode,
-                    name_zh: sta.staname,
-                    lat: parseFloat(sta.lat),
-                    lon: parseFloat(sta.log),
-                    lane_name: sta.laneName ? sta.laneName : null,
-                    routes: [`${routeName}_${dir}`],
-                  },
-                ],
-                { onConflict: "code" },
-              )
-              .then(() => {
-                // console.log("Insert success");
-              });
-          } else {
-            // console.log(`Updating ${sta.stationName}`);
-            // deprecated
-            supabase
-              .rpc("append_routes", {
-                station_id: sta.stationcode,
-                route_name: `${routeName}_${dir}`,
-              })
-              .then((value) => {});
-          }
-        });
-    }
-    const current_stations = await supabase
-      .from("stations")
-      .select("*")
-      .contains("routes", [`${routeName}_${dir}`]);
-    if (!current_stations.data) return;
-    // console.log(current_stations.data);
-    const extra = current_stations.data.filter(
-      ({ code }) =>
-        data.routeinfo.filter((sta: any) => sta.stationcode === code).length ===
-        0,
-    );
-    let promises = [];
-    for (let sta of extra) {
-      if (!sta.routes) continue;
-      sta.routes = sta.routes.filter(
-        (route) => route !== `${routeName}_${dir}`,
-      );
-      promises.push(supabase.from("stations").update(sta).eq("id", sta.id));
-    }
-    await Promise.all(promises);
-    // console.log(extra);
-  }
-}
+//   if (detailedInfo.header.status === "000") {
+//     const data = detailedInfo.data[0];
+//     await Promise.all(
+//       data.routeinfo.map((station: any) => {
+//         return supabase
+//           ?.from("stations")
+//           .update({
+//             dsat_id: station.stacode,
+//             dsat_label: station.stalabel,
+//             image_url: station.stationurl,
+//           })
+//           .eq("code", station.stationcode);
+//       }),
+//     );
+//     for (let sta of data.routeinfo) {
+//       supabase
+//         .from("stations")
+//         .select()
+//         .eq("code", sta.stationcode)
+//         .then((value) => {
+//           if (!supabase) return;
+//           if (value.data?.length === 0) {
+//             supabase
+//               .from("stations")
+//               .upsert(
+//                 [
+//                   {
+//                     code: sta.stationcode,
+//                     name_zh: sta.staname,
+//                     lat: parseFloat(sta.lat),
+//                     lon: parseFloat(sta.log),
+//                     lane_name: sta.laneName ? sta.laneName : null,
+//                     routes: [`${routeName}_${dir}`],
+//                   },
+//                 ],
+//                 { onConflict: "code" },
+//               )
+//               .then(() => {
+//                 // console.log("Insert success");
+//               });
+//           } else {
+//             // console.log(`Updating ${sta.stationName}`);
+//             // deprecated
+//             supabase
+//               .rpc("append_routes", {
+//                 station_id: sta.stationcode,
+//                 route_name: `${routeName}_${dir}`,
+//               })
+//               .then((value) => {});
+//           }
+//         });
+//     }
+//     const current_stations = await supabase
+//       .from("stations")
+//       .select("*")
+//       .contains("routes", [`${routeName}_${dir}`]);
+//     if (!current_stations.data) return;
+//     // console.log(current_stations.data);
+//     const extra = current_stations.data.filter(
+//       ({ code }) =>
+//         data.routeinfo.filter((sta: any) => sta.stationcode === code).length ===
+//         0,
+//     );
+//     let promises = [];
+//     for (let sta of extra) {
+//       if (!sta.routes) continue;
+//       sta.routes = sta.routes.filter(
+//         (route) => route !== `${routeName}_${dir}`,
+//       );
+//       promises.push(supabase.from("stations").update(sta).eq("id", sta.id));
+//     }
+//     await Promise.all(promises);
+//     // console.log(extra);
+//   }
+// }
 
 export default async function getRouteData(params: {
   routeName: string;

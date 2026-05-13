@@ -3,52 +3,52 @@ import { DSATInstance } from "../instances/axios";
 import { supabase } from "../instances/supabase";
 import getRequestToken from "../utils/getRequestToken";
 
-async function updateDatabase(
-  data: LocationData,
-  routeName: string,
-  dir: string,
-) {
-  if (supabase) {
-    for (let sta of data.data.stationInfoList) {
-      supabase
-        .from("stations")
-        .select()
-        .eq("code", sta.stationCode)
-        .then((value) => {
-          if (!supabase) return;
-          if (value.data?.length === 0) {
-            supabase
-              .from("stations")
-              .upsert(
-                [
-                  {
-                    code: sta.stationCode,
-                    name_zh: sta.stationName,
-                    lat: parseFloat(sta.latitude),
-                    lon: parseFloat(sta.longitude),
-                    lane_name: sta.laneName ? sta.laneName : null,
-                    routes: [`${routeName}_${dir}`],
-                  },
-                ],
-                { onConflict: "code" },
-              )
-              .then(() => {
-                // console.log("Insert success");
-              });
-          } else {
-            // console.log(`Updating ${sta.stationName}`);
-            // deprecated
-            supabase
-              .rpc("append_routes", {
-                station_id: sta.stationCode,
-                route_name: `${routeName}_${dir}`,
-              })
-              .then((value) => {});
-          }
-        });
-    }
-  }
-}
+// async function updateDatabase(
+//   data: LocationData,
+//   routeName: string,
+//   dir: string,
+// ) {
+//   if (supabase) {
+//     for (let sta of data.data.stationInfoList) {
+//       supabase
+//         .from("stations")
+//         .select()
+//         .eq("code", sta.stationCode)
+//         .then((value) => {
+//           if (!supabase) return;
+//           if (value.data?.length === 0) {
+//             supabase
+//               .from("stations")
+//               .upsert(
+//                 [
+//                   {
+//                     code: sta.stationCode,
+//                     name_zh: sta.stationName,
+//                     lat: parseFloat(sta.latitude),
+//                     lon: parseFloat(sta.longitude),
+//                     lane_name: sta.laneName ? sta.laneName : null,
+//                     routes: [`${routeName}_${dir}`],
+//                   },
+//                 ],
+//                 { onConflict: "code" },
+//               )
+//               .then(() => {
+//                 // console.log("Insert success");
+//               });
+//           } else {
+//             // console.log(`Updating ${sta.stationName}`);
+//             // deprecated
+//             supabase
+//               .rpc("append_routes", {
+//                 station_id: sta.stationCode,
+//                 route_name: `${routeName}_${dir}`,
+//               })
+//               .then((value) => {});
+//           }
+//         });
+//     }
+//   }
+// }
 
 export default async function getLocation(params: {
   routeName: string;
