@@ -18,8 +18,8 @@ export default function StationsMap({
 }: StationsMapProps) {
   const currentTab = useContext(CurrentTabContext);
   const containerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<Map>();
-  const geoLocateRef = useRef<GeolocateControl>();
+  const mapRef = useRef<Map>(undefined);
+  const geoLocateRef = useRef<GeolocateControl>(undefined);
   const timeout = useRef<number | null>(null);
   const markers = useRef<Marker[]>([]);
   useEffect(() => {
