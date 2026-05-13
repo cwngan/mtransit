@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Header from "./components/Header";
 import RouteStationList from "./components/RouteStationList";
@@ -40,7 +40,8 @@ const getRouteData = async (data: { routeName: string; dir: string }) => {
   });
 };
 
-export default function Page({ params: { id } }: { params: { id: string } }) {
+export default function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const searchParams = useSearchParams();
   const dir = searchParams.get("dir") || "0";
   const headerRef = useRef<HTMLDivElement>(null);
